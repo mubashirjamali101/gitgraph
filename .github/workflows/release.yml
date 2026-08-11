@@ -59,7 +59,7 @@ jobs:
       - name: Build (native)
         if: matrix.target == ''
         run: pnpm tauri build
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: gitgraph-${{ matrix.artifact }}
           path: ${{ matrix.bundle_glob }}
