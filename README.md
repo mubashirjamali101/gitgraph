@@ -1,5 +1,7 @@
 # GitGraph
 
+![Open Graph preview](docs/social.png)
+
 A fast, native git‑graph viewer for macOS, Windows, and Linux. Built with Tauri 2 + Rust + React.
 Designed to replace the "open VS Code just for its Git Graph extension" reflex.
 

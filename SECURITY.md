@@ -2,7 +2,11 @@
 
 ## Reporting a vulnerability
 
-Email <gitgraph@mubashirjamali.com>. Please do not open a public issue for
+Primary contact: **security@mubashirjamali.com**
+Product contact: **gitgraph@mubashirjamali.com**
+
+
+Email **security@mubashirjamali.com** (or <gitgraph@mubashirjamali.com>). Please do not open a public issue for
 something exploitable — a private report gives everyone using the app time to
 update. A reply should come within a week.
 
