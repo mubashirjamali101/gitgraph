@@ -4,7 +4,7 @@
   "description": "A fast, minimal git graph viewer for the desktop",
   "license": "MIT",
   "author": "Mubashir Jamali <mubashirjamali101@gmail.com> (https://mubashirjamali.com/en/open-source/gitgraph)",
-  "homepage": "https://mubashirjamali.com/en/open-source/gitgraph",
+  "homepage": "https://www.mubashirjamali.com/en/open-source/gitgraph",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mubashirjamali101/gitgraph.git"
