@@ -1,9 +1,22 @@
-name: Release builds
+name: Release
 
+# Cut a release:  git tag v0.1.0 && git push origin v0.1.0
+# Builds installers for macOS, Windows and Linux and attaches them to the GitHub release.
 on:
-  workflow_dispatch:
   push:
     tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release (e.g. v0.1.0). Leave empty to use the triggering ref."
+        required: false
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -16,7 +29,7 @@ jobs:
             artifact: macos-universal
             bundle_glob: |
               src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
-              src-tauri/target/universal-apple-darwin/release/bundle/macos/*.app
+              src-tauri/target/universal-apple-darwin/release/bundle/macos/*.app.tar.gz
           - os: windows-latest
             target: ""
             artifact: windows-x64
@@ -59,8 +72,44 @@ jobs:
       - name: Build (native)
         if: matrix.target == ''
         run: pnpm tauri build
+      # .app directories are awkward as release assets — tar them.
+      - name: Pack macOS .app
+        if: matrix.os == 'macos-latest'
+        shell: bash
+        run: |
+          shopt -s nullglob
+          for app in src-tauri/target/universal-apple-darwin/release/bundle/macos/*.app; do
+            tar -czf "${app}.tar.gz" -C "$(dirname "$app")" "$(basename "$app")"
+          done
       - uses: actions/upload-artifact@v4
         with:
           name: gitgraph-${{ matrix.artifact }}
           path: ${{ matrix.bundle_glob }}
           if-no-files-found: error
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - name: Collect release files
+        shell: bash
+        run: |
+          mkdir -p dist
+          find artifacts -type f \( -name '*.dmg' -o -name '*.msi' -o -name '*.exe' -o -name '*.deb' -o -name '*.rpm' -o -name '*.AppImage' -o -name '*.tar.gz' \) \
+            -exec cp -v {} dist/ \;
+          ls -lh dist/
+          (cd dist && sha256sum * > SHA256SUMS)
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          name: GitGraph ${{ github.event.inputs.tag || github.ref_name }}
+          generate_release_notes: true
+          files: dist/*
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

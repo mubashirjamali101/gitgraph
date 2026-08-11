@@ -66,35 +66,32 @@ scrubbing the hijack-vector environment.
 [SECURITY.md](SECURITY.md) has the full threat model, the known gaps, and where
 to report a vulnerability.
 
-## Install / Run
+## Install
 
-### Where the app ends up
+Download the installer for your platform from the [releases page](../../releases):
 
-There are no published releases yet — nothing is signed or notarized, so build
-it yourself (below). A local release build leaves:
+| Platform | What to open |
+|----------|----------------|
+| **macOS** | `.dmg` → double-click **GitGraph.app** (or drag it to Applications) |
+| **Windows** | `.msi` or the NSIS `.exe` → next, next, finish |
+| **Linux** | `.AppImage` (chmod +x and run), `.deb`, or `.rpm` |
 
-```
-src-tauri/target/release/bundle/dmg/GitGraph_0.1.0_aarch64.dmg
-src-tauri/target/release/bundle/macos/GitGraph.app
-```
+Builds are **unsigned / not notarized** (no Apple Developer / code-signing cert in CI yet).
+First launch on macOS:
 
-Apple Silicon only. Unsigned, so first launch:
-
-1. Open Finder, locate `GitGraph.app`
-2. Right‑click → **Open**
-3. macOS will warn; click **Open** again
-4. (If still blocked) System Settings → Privacy & Security → **Open Anyway**
+1. Right-click the app → **Open**
+2. Click **Open** again when Gatekeeper warns
+3. If still blocked: System Settings → Privacy & Security → **Open Anyway**
 
 ### Build from source
 
-See [docs/BUILD.md](docs/BUILD.md) for the full build flow, including the Homebrew‑vs‑rustup gotcha that breaks universal macOS builds, and how to produce Windows / Linux installers from CI.
-
-Short version:
+See [docs/BUILD.md](docs/BUILD.md) for the full build flow (including the Homebrew-vs-rustup
+gotcha that breaks universal macOS builds).
 
 ```bash
 pnpm install
-pnpm tauri build           # native arch, ~50 s release compile
-# DMG → src-tauri/target/release/bundle/dmg/GitGraph_0.1.0_<arch>.dmg
+pnpm tauri build           # native arch
+# DMG → src-tauri/target/release/bundle/dmg/GitGraph_*.dmg
 ```
 
 ## Develop
