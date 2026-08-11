@@ -6,6 +6,15 @@ Designed to replace the "open VS Code just for its Git Graph extension" reflex.
 ![status](https://img.shields.io/badge/status-alpha-orange)
 ![platforms](https://img.shields.io/badge/platforms-macOS%20%E2%80%A2%20Windows%20%E2%80%A2%20Linux-blue)
 
+
+## Screenshots
+
+![GitGraph main window](docs/screenshots/main.png)
+
+![GitGraph diff view](docs/screenshots/diff.png)
+
+Portfolio: **[mubashirjamali.com/en/open-source/gitgraph](https://mubashirjamali.com/en/open-source/gitgraph)** · Build notes: [how I built it](https://mubashirjamali.com/en/writing/building-gitgraph-with-claude-code)
+
 ## What it does
 
 - Repositories listed in a sidebar, each with its uncommitted changes, commit box and stashes; the graph follows the selection (or the toolbar's **Repo** menu)
@@ -203,4 +212,5 @@ Deferred to v1.1:
 ## Contact
 
 Bugs and feature requests: [open an issue](https://github.com/mubashirjamali101/gitgraph/issues).
+Portfolio page: <https://mubashirjamali.com/en/open-source/gitgraph>.
 Anything else, including security reports: <gitgraph@mubashirjamali.com>.
