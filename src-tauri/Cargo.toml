@@ -21,7 +21,7 @@ tauri = { version = "2", features = [] }
 # default `https`/`ssh` features removes openssl-sys and libssh2-sys — a
 # smaller binary, one less C library to keep patched, and a build that can
 # cross-compile without an OpenSSL for the target architecture.
-git2 = { version = "0.20", default-features = false, features = ["vendored-libgit2"] }
+git2 = { version = "0.21", default-features = false, features = ["vendored-libgit2"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "time", "process", "io-util"] }
