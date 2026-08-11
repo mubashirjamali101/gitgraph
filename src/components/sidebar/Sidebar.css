@@ -1,0 +1,311 @@
+.sidebar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+  min-width: 0;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border-subtle);
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-2);
+  flex: 0 0 auto;
+  height: 38px;
+  padding: 0 var(--pad-2) 0 var(--pad-4);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.sidebar-title {
+  flex: 1;
+  color: var(--fg-secondary);
+  font-size: 0.9em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sidebar-add {
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--fg-secondary);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.sidebar-add:hover { background: var(--bg-hover); color: var(--fg-primary); }
+
+.sidebar-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: var(--gap-4);
+}
+
+.sidebar-empty {
+  padding: var(--pad-4);
+  color: var(--fg-tertiary);
+}
+
+/* ------------------------------------------------------------- repo row */
+
+.repo-row {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-2);
+  height: 28px;
+  padding: 0 var(--pad-2) 0 var(--pad-4);
+  cursor: pointer;
+}
+
+.repo-row:hover { background: var(--bg-hover); }
+.repo-entry.is-active .repo-row { background: var(--bg-active); }
+
+.repo-name {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.repo-entry.is-active .repo-name { color: var(--fg-primary); }
+
+.repo-branch {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--fg-tertiary);
+  font-size: 0.9em;
+}
+
+.repo-count {
+  flex: 0 0 auto;
+  margin-left: auto;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--bg-tertiary);
+  color: var(--fg-secondary);
+  font-size: 0.85em;
+  line-height: 15px;
+}
+
+.repo-close {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--fg-tertiary);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  visibility: hidden;
+}
+
+.repo-row:hover .repo-close { visibility: visible; }
+.repo-close:hover { background: var(--bg-tertiary); color: var(--fg-primary); }
+
+/* --------------------------------------------------------- repo changes */
+
+.repo-changes {
+  padding: var(--gap-2) var(--pad-3) var(--gap-4);
+}
+
+.repo-changes .commit-message {
+  width: 100%;
+  padding: var(--pad-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  color: var(--fg-primary);
+  font: inherit;
+  resize: vertical;
+}
+
+.repo-changes .commit-message:focus { outline: none; border-color: var(--accent); }
+
+.repo-changes .commit-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-3);
+  margin: var(--gap-2) 0 var(--gap-3);
+}
+
+.repo-changes .commit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-2);
+  flex: 1;
+  height: 26px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: var(--accent-fg);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.repo-changes .commit-button:hover:not(:disabled) { background: var(--accent-hover); }
+.repo-changes .commit-button:disabled { opacity: 0.45; cursor: default; }
+
+.repo-changes .commit-count {
+  padding: 0 5px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.22);
+  font-size: 0.85em;
+}
+
+.repo-changes .amend-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-1);
+  color: var(--fg-secondary);
+  cursor: pointer;
+}
+
+.repo-changes .amend-toggle input { accent-color: var(--accent); cursor: pointer; }
+
+.change-group { margin-top: var(--gap-3); }
+
+.change-group-head {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-2);
+  padding: 0 var(--pad-2) var(--gap-1);
+  color: var(--fg-secondary);
+  font-size: 0.9em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.group-count {
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--bg-tertiary);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.group-action {
+  width: 20px;
+  height: 20px;
+  margin-left: auto;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--fg-secondary);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.group-action:hover:not(:disabled) { background: var(--bg-tertiary); color: var(--fg-primary); }
+
+.change-list { list-style: none; }
+
+.change-row {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-1);
+  height: 22px;
+  padding-right: var(--gap-1);
+  border-radius: var(--radius-sm);
+}
+
+.change-row:hover { background: var(--bg-hover); }
+.change-row.is-open { background: var(--accent-dim); }
+
+.change-open {
+  display: flex;
+  align-items: baseline;
+  gap: var(--gap-2);
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding-left: var(--pad-2);
+  border: 0;
+  background: transparent;
+  color: var(--fg-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.change-file {
+  flex: 0 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.change-dir {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  direction: rtl;
+  text-align: left;
+  color: var(--fg-tertiary);
+  font-size: 0.85em;
+}
+
+.change-status {
+  flex: 0 0 12px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.change-action {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--fg-secondary);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  visibility: hidden;
+}
+
+.change-row:hover .change-action { visibility: visible; }
+.change-action:hover:not(:disabled) { background: var(--bg-tertiary); color: var(--fg-primary); }
+
+.changes-clean {
+  padding: var(--gap-2) var(--pad-2);
+  color: var(--fg-tertiary);
+}
+
+/* ----------------------------------------------------------- resizer */
+
+.sidebar-resizer {
+  position: absolute;
+  top: 0;
+  right: -2px;
+  width: 5px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 5;
+}
+
+.sidebar-resizer:hover,
+.sidebar-resizer.is-resizing {
+  background: var(--accent);
+  opacity: 0.6;
+}

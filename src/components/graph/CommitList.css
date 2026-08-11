@@ -1,0 +1,276 @@
+.commit-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  background: var(--bg-primary);
+  /*
+   * The toolbar drops its labels by the width of this pane rather than the
+   * window's: dragging the sidebar wider squeezes the toolbar just as much as
+   * shrinking the window does.
+   */
+  container: graph-pane / inline-size;
+}
+
+/* ----------------------------------------------------------------- header */
+
+.list-header {
+  display: grid;
+  align-items: center;
+  height: var(--header-height);
+  flex: 0 0 auto;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+  color: var(--fg-tertiary);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.list-header .cell {
+  position: relative;
+  padding: 0 12px;
+}
+
+.column-resize {
+  position: absolute;
+  top: 0;
+  right: -3px;
+  bottom: 0;
+  width: 6px;
+  cursor: col-resize;
+}
+
+/* The last column has no gutter beyond it to hang a handle over. */
+.column-resize.at-edge {
+  right: 0;
+}
+
+.column-resize:hover {
+  background: var(--accent-dim);
+}
+
+/* ------------------------------------------------------------------- body */
+
+.list-body {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.list-scroll {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.list-content {
+  position: relative;
+  width: 100%;
+}
+
+/*
+ * The canvas sits under the rows and above the list background. It is sized to
+ * the viewport, not the scrolled content, so its element stays small no matter
+ * how long the history is.
+ */
+.graph-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------- rows */
+
+.commit-row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: grid;
+  grid-template-columns: var(--grid);
+  align-items: center;
+  cursor: default;
+  /* No transitions here: hundreds of absolutely positioned rows animating on
+     hover is the single most expensive thing this view can do. */
+  contain: layout style;
+}
+
+.commit-row:hover {
+  background: var(--bg-hover);
+}
+
+.commit-row.is-selected {
+  background: var(--accent-dim);
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+
+.commit-row.is-match .cell-message {
+  color: var(--color-modify);
+}
+
+.commit-row.is-current-match {
+  background: color-mix(in srgb, var(--color-modify) 18%, transparent);
+}
+
+.commit-row.is-working-tree .cell-message {
+  color: var(--fg-secondary);
+  font-style: italic;
+}
+
+.commit-row .cell {
+  padding: 0 12px;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 12px;
+}
+
+.cell-graph {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 0;
+  padding-right: 8px;
+  overflow: hidden;
+}
+
+/* Transparent spacer reserving room for the canvas beneath. */
+.lane-track {
+  flex: 0 0 auto;
+  height: 100%;
+}
+
+.cell-message {
+  color: var(--fg-primary);
+}
+
+.cell-author,
+.cell-date {
+  color: var(--fg-secondary);
+}
+
+.cell-sha code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  color: var(--fg-secondary);
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+  padding: 1px 5px;
+}
+
+.sha-placeholder {
+  color: var(--fg-tertiary);
+}
+
+/* ------------------------------------------------------------ ref badges */
+
+.ref-badges {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.ref-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 190px;
+  /* Shrinks under pressure, but never below a readable stub: a badge collapsed
+     to "d…" tells you less than the "+N" chip beside it. */
+  min-width: 88px;
+  flex: 0 1 auto;
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  line-height: 16px;
+  user-select: none;
+  cursor: pointer;
+}
+
+.ref-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ref-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  background: currentColor;
+}
+
+.ref-current {
+  font-weight: 700;
+}
+
+.ref-localbranch,
+.ref-current {
+  color: var(--color-local-branch);
+  background: color-mix(in srgb, var(--color-local-branch) 20%, var(--bg-primary));
+}
+
+.ref-badge.ref-current {
+  border-color: var(--color-local-branch);
+}
+
+.ref-remotebranch {
+  color: var(--color-remote-branch);
+  background: color-mix(in srgb, var(--color-remote-branch) 20%, var(--bg-primary));
+}
+
+.ref-tag {
+  color: var(--color-tag);
+  background: color-mix(in srgb, var(--color-tag) 20%, var(--bg-primary));
+}
+
+.ref-head {
+  color: var(--color-head);
+  background: color-mix(in srgb, var(--color-head) 20%, var(--bg-primary));
+}
+
+.ref-more {
+  flex: 0 0 auto;
+  padding: 1px 5px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--bg-tertiary);
+  color: var(--fg-secondary);
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.ref-more:hover {
+  color: var(--fg-primary);
+  border-color: var(--border-strong);
+}
+
+/* --------------------------------------------------- detail slot & footer */
+
+.detail-slot {
+  position: absolute;
+  right: 0;
+  z-index: 3;
+}
+
+.list-footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--footer-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg-tertiary);
+  font-size: 11px;
+}

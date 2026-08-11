@@ -1,0 +1,129 @@
+.stash-panel {
+  flex: 0 0 auto;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+  font-size: 12px;
+}
+
+.stash-toggle {
+  width: 100%;
+  padding: 5px 12px;
+  border: 0;
+  background: transparent;
+  color: var(--fg-secondary);
+  font-size: 11px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.stash-toggle:hover {
+  color: var(--fg-primary);
+  background: var(--bg-hover);
+}
+
+.stash-body {
+  padding: 6px 12px 10px;
+  border-top: 1px solid var(--border-subtle);
+  max-height: 220px;
+  overflow: auto;
+}
+
+.stash-create {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.stash-create input[type='text'],
+.stash-create input:not([type]) {
+  flex: 1;
+  min-width: 160px;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-primary);
+  color: var(--fg-primary);
+  font-size: 11px;
+}
+
+.stash-create label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--fg-secondary);
+  font-size: 11px;
+}
+
+.stash-panel button:not(.stash-toggle) {
+  padding: 3px 9px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-tertiary);
+  color: var(--fg-primary);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.stash-panel button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.stash-panel .danger {
+  color: var(--color-remove);
+}
+
+.stash-empty {
+  margin: 6px 0 0;
+  color: var(--fg-tertiary);
+  font-size: 11px;
+}
+
+.stash-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stash-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+}
+
+.stash-index {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10.5px;
+  color: var(--fg-tertiary);
+}
+
+.stash-branch {
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--color-local-branch) 18%, var(--bg-primary));
+  color: var(--color-local-branch);
+  font-size: 10.5px;
+}
+
+.stash-message {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--fg-secondary);
+  font-size: 11px;
+}
+
+.stash-actions {
+  display: flex;
+  gap: 4px;
+}

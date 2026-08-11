@@ -1,0 +1,129 @@
+.picker-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 12vh;
+  background: rgba(1, 4, 9, 0.5);
+  backdrop-filter: blur(3px);
+}
+
+.picker {
+  width: min(560px, 92vw);
+  max-height: 62vh;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  box-shadow: var(--shadow-pop);
+  overflow: hidden;
+}
+
+.picker-input {
+  padding: 12px 14px;
+  border: 0;
+  border-bottom: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--fg-primary);
+  font-size: 13px;
+}
+
+.picker-input:focus {
+  outline: none;
+}
+
+.picker-list {
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  overflow: auto;
+  flex: 1;
+}
+
+.picker-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.picker-item.is-active {
+  background: var(--accent-dim);
+}
+
+.picker-kind {
+  flex: 0 0 auto;
+  min-width: 52px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.kind-local {
+  color: var(--color-local-branch);
+  background: color-mix(in srgb, var(--color-local-branch) 18%, transparent);
+}
+.kind-remote {
+  color: var(--color-remote-branch);
+  background: color-mix(in srgb, var(--color-remote-branch) 18%, transparent);
+}
+.kind-tag {
+  color: var(--color-tag);
+  background: color-mix(in srgb, var(--color-tag) 18%, transparent);
+}
+
+.picker-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--fg-primary);
+}
+
+.picker-current {
+  flex: 0 0 auto;
+  font-size: 10px;
+  color: var(--color-add);
+}
+
+.picker-sha {
+  flex: 0 0 auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10.5px;
+  color: var(--fg-tertiary);
+}
+
+.picker-empty {
+  padding: 14px;
+  text-align: center;
+  color: var(--fg-tertiary);
+  font-size: 12px;
+}
+
+.picker-hint {
+  display: flex;
+  gap: 12px;
+  padding: 6px 12px;
+  border-top: 1px solid var(--border-subtle);
+  color: var(--fg-tertiary);
+  font-size: 10.5px;
+}
+
+.picker-hint kbd {
+  padding: 1px 4px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--bg-tertiary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}

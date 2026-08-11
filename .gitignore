@@ -1,0 +1,23 @@
+node_modules/
+dist/
+.env
+.env.local
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+target/
+src-tauri/target/
+/src-tauri/.cargo/
+/src-tauri/Cargo.lock
+/src-tauri/Cargo.toml.orig
+/src-tauri/.tauri-build
+/src-tauri/.tauri
+/src-tauri/bundle/
+/src-tauri/release/
+/src-tauri/debug/
+/src-tauri/.package-cache/
+
+# generated mock fixture (pnpm fixture)
+public/fixture.json

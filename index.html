@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GitGraph</title>
+    <style>
+      /* Ensure native webview windows have a matching dark gradient background immediately
+         (use literal colors so it applies before app CSS/variables load) */
+      html, body, #root { height: 100%; margin: 0; padding: 0; background: linear-gradient(180deg, #0f1113 0%, #0c0d0f 100%); }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

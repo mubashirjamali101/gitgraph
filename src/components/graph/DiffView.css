@@ -1,0 +1,148 @@
+.diff-view {
+  position: relative;
+  height: 100%;
+  overflow: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11.5px;
+  color: var(--fg-diff);
+}
+
+/* Rows are absolutely positioned inside a spacer of the full height, so only
+   the visible ones exist in the DOM. */
+.diff-canvas {
+  position: relative;
+  min-width: 100%;
+  width: max-content;
+}
+
+.diff-canvas > * {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--diff-line-height, 18px);
+  line-height: var(--diff-line-height, 18px);
+}
+
+.hunk-header {
+  padding: 0 10px;
+  background: var(--bg-secondary);
+  color: var(--fg-tertiary);
+  font-size: 10.5px;
+  white-space: pre;
+}
+
+.diff-line,
+.diff-side {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 10px;
+  white-space: pre;
+}
+
+.line-no {
+  flex: 0 0 auto;
+  min-width: 34px;
+  padding-left: 8px;
+  text-align: right;
+  color: var(--fg-tertiary);
+  user-select: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.line-sign {
+  flex: 0 0 auto;
+  width: 8px;
+  color: var(--fg-tertiary);
+  user-select: none;
+}
+
+.line-content {
+  flex: 1 0 auto;
+  white-space: pre;
+}
+
+.line-added {
+  background: color-mix(in srgb, var(--color-add) 14%, transparent);
+}
+
+.line-removed {
+  background: color-mix(in srgb, var(--color-remove) 14%, transparent);
+}
+
+.line-blank {
+  background: var(--bg-secondary);
+}
+
+/* --------------------------------------------------------- side by side */
+
+.diff-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border-subtle);
+}
+
+.diff-side {
+  background: var(--bg-primary);
+  overflow: hidden;
+}
+
+.diff-empty {
+  padding: 14px;
+  color: var(--fg-tertiary);
+  font-size: 12px;
+  text-align: center;
+}
+
+.diff-truncated {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid var(--border-subtle);
+  color: var(--color-modify);
+  font-size: 11px;
+}
+
+/* Syntax highlighting — token classes emitted by highlight.js. */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-built_in {
+  color: var(--color-remote-branch);
+}
+.hljs-string,
+.hljs-attr {
+  color: var(--color-add);
+}
+.hljs-number,
+.hljs-literal {
+  color: var(--color-head);
+}
+.hljs-comment,
+.hljs-quote {
+  color: var(--fg-tertiary);
+  font-style: italic;
+}
+.hljs-title,
+.hljs-function .hljs-title,
+.hljs-section {
+  color: var(--color-local-branch);
+}
+.hljs-type,
+.hljs-class .hljs-title {
+  color: var(--color-tag);
+}
+.hljs-variable,
+.hljs-template-variable {
+  color: var(--fg-primary);
+}
+.hljs-meta,
+.hljs-symbol {
+  color: var(--color-modify);
+}
+.hljs-deletion {
+  color: var(--color-remove);
+}
+.hljs-addition {
+  color: var(--color-add);
+}

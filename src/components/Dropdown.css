@@ -1,0 +1,104 @@
+.dropdown {
+  position: relative;
+  display: inline-flex;
+  min-width: 0;
+}
+
+.dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-2);
+  min-width: 0;
+  height: 24px;
+  padding: 0 var(--pad-2) 0 var(--pad-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-tertiary);
+  color: var(--fg-primary);
+  font: inherit;
+  cursor: pointer;
+}
+
+.dropdown-trigger:hover:not(:disabled) {
+  background: var(--bg-active);
+  border-color: var(--border-strong);
+}
+
+.dropdown-trigger:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.dropdown-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdown-caret {
+  color: var(--fg-tertiary);
+  font-size: 9px;
+  line-height: 1;
+}
+
+.dropdown-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  z-index: 40;
+  min-width: 100%;
+  max-width: 380px;
+  padding: var(--gap-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-secondary);
+  box-shadow: var(--shadow-pop);
+}
+
+.dropdown-panel.align-start { left: 0; }
+.dropdown-panel.align-end { right: 0; }
+
+/* Shared item styling for whatever a caller puts in the panel. */
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-3);
+  width: 100%;
+  padding: 5px var(--pad-3);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--fg-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.dropdown-item:hover { background: var(--bg-hover); }
+.dropdown-item.is-selected { background: var(--accent-dim); }
+
+.dropdown-item .item-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown-item .item-note {
+  color: var(--fg-tertiary);
+  font-size: 0.9em;
+}
+
+.dropdown-separator {
+  height: 1px;
+  margin: var(--gap-1) 0;
+  background: var(--border-subtle);
+}
+
+.dropdown-heading {
+  padding: var(--gap-1) var(--pad-3);
+  color: var(--fg-tertiary);
+  font-size: 0.85em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}

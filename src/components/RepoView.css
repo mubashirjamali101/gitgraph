@@ -1,0 +1,66 @@
+.repo-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.repo-error {
+  margin: auto;
+  max-width: 460px;
+  padding: 24px;
+  text-align: center;
+  color: var(--fg-secondary);
+}
+
+.repo-error h2 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  color: var(--fg-primary);
+}
+
+.repo-error p {
+  margin: 0 0 16px;
+  font-size: 12px;
+  word-break: break-word;
+}
+
+.repo-error button {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-tertiary);
+  color: var(--fg-primary);
+  cursor: pointer;
+}
+
+/* Placeholder rows while the first page loads, sized like real rows so the
+   list does not jump when the data arrives. */
+.graph-skeleton {
+  flex: 1;
+  padding: calc(var(--header-height) + 8px) 0 0;
+  overflow: hidden;
+}
+
+.skeleton-row {
+  height: var(--row-height);
+  margin: 0 12px 4px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--bg-secondary) 0%,
+    var(--bg-tertiary) 50%,
+    var(--bg-secondary) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-row { animation: none; }
+}

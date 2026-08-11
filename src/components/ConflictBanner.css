@@ -1,0 +1,50 @@
+.conflict-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex: 0 0 auto;
+  padding: 7px 12px;
+  background: color-mix(in srgb, var(--color-modify) 16%, var(--bg-secondary));
+  border-bottom: 1px solid color-mix(in srgb, var(--color-modify) 40%, var(--border));
+  color: var(--fg-primary);
+  font-size: 12px;
+}
+
+.conflict-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conflict-paths {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--fg-secondary);
+}
+
+.conflict-actions {
+  display: flex;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.conflict-actions button {
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-tertiary);
+  color: var(--fg-primary);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.conflict-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.conflict-actions .danger {
+  color: var(--color-remove);
+  border-color: color-mix(in srgb, var(--color-remove) 45%, var(--border));
+}

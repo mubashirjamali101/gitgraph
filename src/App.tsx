@@ -1,0 +1,164 @@
+/**
+ * Application root: window chrome, session restore, and the wiring between
+ * repository events and the store.
+ */
+import { useCallback, useEffect, useState } from 'react'
+import { listen } from '@tauri-apps/api/event'
+import { describeError } from './errors'
+
+import { applyGeometry } from './constants'
+import { ipc, type RepoChangedEvent } from './ipc'
+import { activeTab, useStore } from './store'
+import HomeScreen from './components/HomeScreen'
+import RepoView from './components/RepoView'
+import SettingsPanel from './components/SettingsPanel'
+import Sidebar from './components/sidebar/Sidebar'
+import { showToast } from './components/Toast'
+import './App.css'
+
+export default function App() {
+  const tabs = useStore(state => state.tabs)
+  const tab = useStore(activeTab)
+  const settings = useStore(state => state.settings)
+  const restoring = useStore(state => state.restoring)
+  const restoreSession = useStore(state => state.restoreSession)
+  const openPath = useStore(state => state.openPath)
+  const reload = useStore(state => state.reload)
+  const [settingsOpen, setSettingsOpen] = useState(false)
+
+  useEffect(() => {
+    void restoreSession()
+  }, [restoreSession])
+
+  // Theme, density and font size are applied to the root element, and the
+  // geometry constants are published as CSS variables from the same place they
+  // are defined in TypeScript.
+  useEffect(() => {
+    const root = document.documentElement
+    root.dataset.theme = settings.theme
+    root.dataset.density = settings.density
+    root.style.fontSize = `${settings.fontSize}px`
+    applyGeometry(settings.density)
+  }, [settings])
+
+  // The backend watches each repository and tells us when it changes on disk,
+  // so commits made in a terminal appear without a manual refresh.
+  useEffect(() => {
+    const unlisten = listen<RepoChangedEvent>('repo-changed', event => {
+      const repoId = event.payload.repo_id
+      if (useStore.getState().tabs.some(entry => entry.id === repoId)) {
+        void useStore.getState().reload(repoId)
+      }
+    })
+    return () => {
+      void unlisten.then(stop => stop()).catch(() => {})
+    }
+  }, [])
+
+  // Staging done outside the app changes only `.git/index`, which the watcher
+  // deliberately ignores (see watch.rs). Picking it up when the window regains
+  // focus covers that case without a reload loop.
+  useEffect(() => {
+    const onFocus = () => {
+      const { activeId, refreshWorkingState } = useStore.getState()
+      if (activeId) void refreshWorkingState(activeId)
+    }
+    window.addEventListener('focus', onFocus)
+    return () => window.removeEventListener('focus', onFocus)
+  }, [])
+
+  const openRepository = useCallback(async () => {
+    try {
+      const path = await ipc.pickDirectory()
+      if (!path) return
+      await openPath(path)
+    } catch (error) {
+      showToast.error(describeError(error))
+    }
+  }, [openPath])
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (!(event.metaKey || event.ctrlKey)) return
+      const active = useStore.getState()
+      switch (event.key.toLowerCase()) {
+        case 'r':
+          if (active.activeId) {
+            event.preventDefault()
+            void reload(active.activeId)
+          }
+          break
+        case 'o':
+          event.preventDefault()
+          void openRepository()
+          break
+        case 'w':
+          if (active.activeId) {
+            event.preventDefault()
+            active.closeTab(active.activeId)
+          }
+          break
+        case ',':
+          event.preventDefault()
+          setSettingsOpen(true)
+          break
+        case '=':
+        case '+':
+          event.preventDefault()
+          active.setSettings({ fontSize: Math.min(20, active.settings.fontSize + 1) })
+          break
+        case '-':
+          event.preventDefault()
+          active.setSettings({ fontSize: Math.max(10, active.settings.fontSize - 1) })
+          break
+        default:
+          break
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [openRepository, reload])
+
+  return (
+    <div className="app">
+      {/*
+        `data-tauri-drag-region` gives the header the platform's own title-bar
+        behaviour: drag to move, double-click to zoom or minimise according to
+        the user's macOS setting. Interactive children simply omit the
+        attribute, so they keep receiving clicks.
+      */}
+      <header className="app-header" data-tauri-drag-region>
+        <span className="app-title" data-tauri-drag-region>
+          {tab ? tab.name : 'GitGraph'}
+        </span>
+        <button
+          type="button"
+          className="app-settings"
+          title="Settings (⌘,)"
+          aria-label="Settings"
+          onClick={() => setSettingsOpen(true)}
+        >
+          ⚙
+        </button>
+      </header>
+
+      <div className="app-body">
+        <Sidebar onOpen={() => void openRepository()} />
+
+        <main className="app-main">
+          {tabs.length === 0 ? (
+            restoring ? (
+              <div className="app-restoring">Restoring your session…</div>
+            ) : (
+              <HomeScreen onOpenRepo={() => void openRepository()} />
+            )
+          ) : tab ? (
+            <RepoView key={tab.id} tab={tab} />
+          ) : null}
+        </main>
+      </div>
+
+      <SettingsPanel isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
+    </div>
+  )
+}

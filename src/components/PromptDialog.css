@@ -1,0 +1,76 @@
+.prompt-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(1, 4, 9, 0.55);
+  backdrop-filter: blur(2px);
+}
+
+.prompt-card {
+  width: min(420px, 90vw);
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  box-shadow: var(--shadow-pop);
+}
+
+.prompt-title {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: var(--fg-primary);
+}
+
+.prompt-label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 11px;
+  color: var(--fg-secondary);
+}
+
+.prompt-card input {
+  width: 100%;
+  padding: 7px 9px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-primary);
+  color: var(--fg-primary);
+  font-size: 12px;
+}
+
+.prompt-card input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--ring-focus);
+}
+
+.prompt-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.prompt-actions button {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-tertiary);
+  color: var(--fg-primary);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.prompt-actions button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-fg);
+}
+
+.prompt-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

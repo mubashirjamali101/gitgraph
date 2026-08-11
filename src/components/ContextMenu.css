@@ -1,0 +1,43 @@
+.context-menu {
+  position: absolute;
+  z-index: 2000;
+  min-width: 200px;
+  background: var(--bg-glass);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  backdrop-filter: saturate(180%) blur(24px);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-pop);
+  border-radius: var(--radius);
+  padding: 4px;
+  animation: ctx-pop var(--motion-fast) ease;
+}
+
+@keyframes ctx-pop {
+  from { opacity: 0; transform: translateY(-2px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.context-item {
+  display: block;
+  width: 100%;
+  padding: 6px 12px;
+  text-align: left;
+  background: transparent;
+  color: var(--fg-primary);
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 400;
+  border-radius: var(--radius-sm);
+  transition: background var(--motion-fast) ease;
+}
+
+.context-item:hover:not(:disabled) {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+.context-item:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

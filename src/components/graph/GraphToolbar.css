@@ -1,0 +1,191 @@
+.graph-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-4);
+  flex: 0 0 auto;
+  height: 38px;
+  padding: 0 var(--pad-4);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+  /*
+   * Never `overflow: hidden` here — the pickers hang out of this 38px strip,
+   * and clipping them makes a menu that opens invisibly. Crowding is handled
+   * by what does not shrink (below) and by the container queries at the end
+   * of this file.
+   */
+  overflow: visible;
+}
+
+/*
+ * Nothing here shrinks below its content: a caption that overflows its field
+ * slides under the next control's opaque background rather than wrapping.
+ * The search box absorbs the slack instead, and the container queries at the
+ * bottom of this file drop labels when even that is not enough.
+ */
+.toolbar-field {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-2);
+  flex: 0 0 auto;
+}
+
+.toolbar-caption {
+  color: var(--fg-secondary);
+  white-space: nowrap;
+}
+
+.repo-picker .dropdown-trigger { min-width: 96px; max-width: 180px; }
+.branch-picker .dropdown-trigger { min-width: 104px; max-width: 200px; }
+
+.toolbar-check {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--gap-2);
+  color: var(--fg-secondary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.toolbar-check input { accent-color: var(--accent); cursor: pointer; }
+.toolbar-check:hover { color: var(--fg-primary); }
+
+.toolbar-spacer { flex: 1 1 auto; min-width: 0; }
+
+.toolbar-search {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-2);
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.toolbar-search .search-input {
+  flex: 0 1 220px;
+  min-width: 0;
+  width: 220px;
+  height: 24px;
+  padding: 0 var(--pad-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  color: var(--fg-primary);
+  font: inherit;
+}
+
+.toolbar-search .search-input::placeholder { color: var(--fg-tertiary); }
+.toolbar-search .search-input:focus { outline: none; border-color: var(--accent); }
+
+.search-status {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-1);
+  color: var(--fg-tertiary);
+  white-space: nowrap;
+}
+
+.search-status button,
+.toolbar-actions button {
+  height: 24px;
+  min-width: 24px;
+  padding: 0 var(--pad-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-tertiary);
+  color: var(--fg-primary);
+  font: inherit;
+  cursor: pointer;
+}
+
+.search-status button:hover,
+.toolbar-actions button:hover {
+  background: var(--bg-active);
+  border-color: var(--border-strong);
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-2);
+  flex: 0 0 auto;
+}
+
+/* ------------------------------------------------------------ pickers */
+
+.dropdown-search {
+  width: 100%;
+  height: 24px;
+  margin-bottom: var(--gap-1);
+  padding: 0 var(--pad-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  color: var(--fg-primary);
+  font: inherit;
+}
+
+.dropdown-search:focus { outline: none; border-color: var(--accent); }
+
+.branch-picker .dropdown-panel { width: 300px; }
+
+.dropdown-scroll {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.dropdown-item .check {
+  width: 12px;
+  flex: 0 0 12px;
+  color: var(--accent);
+}
+
+.dropdown-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--gap-2);
+  padding: var(--gap-1);
+}
+
+.dropdown-footer button {
+  height: 24px;
+  padding: 0 var(--pad-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-tertiary);
+  color: var(--fg-primary);
+  font: inherit;
+  cursor: pointer;
+}
+
+.dropdown-footer button:hover { background: var(--bg-active); }
+
+.dropdown-footer button.primary {
+  border-color: transparent;
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+.dropdown-footer button.primary:hover { background: var(--accent-hover); }
+
+/* ------------------------------------------------------- narrow panes */
+
+/*
+ * Sized against the graph pane, not the window: the sidebar can be dragged
+ * wide enough to squeeze this toolbar on any display.
+ */
+@container graph-pane (max-width: 920px) {
+  .toolbar-search .search-input { flex-basis: 150px; }
+}
+
+@container graph-pane (max-width: 820px) {
+  .toolbar-caption { display: none; }
+}
+
+@container graph-pane (max-width: 700px) {
+  .toolbar-check .check-text { display: none; }
+  .toolbar-search .search-input { flex-basis: 120px; }
+}
+
+@container graph-pane (max-width: 560px) {
+  .toolbar-search { display: none; }
+}

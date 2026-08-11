@@ -1,0 +1,294 @@
+.detail-frame {
+  position: relative;
+  height: 100%;
+  background: var(--detail-bg);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+}
+
+/*
+ * The metadata column gives way to the diff as the panel narrows. A fixed
+ * 320px left it 109px of diff on a 740px pane — a column of ellipses.
+ */
+.detail-panel {
+  display: grid;
+  grid-template-columns: clamp(170px, 34%, 320px) 1fr;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Nothing but a few chips and two buttons live here, so it needs less. */
+.working-tree-panel {
+  grid-template-columns: clamp(150px, 26%, 250px) 1fr;
+}
+
+.detail-side {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  border-right: 1px solid var(--border-subtle);
+  overflow: auto;
+}
+
+.detail-sha {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  color: var(--accent);
+  word-break: break-all;
+}
+
+.detail-message {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--fg-primary);
+  white-space: pre-wrap;
+}
+
+.detail-author,
+.detail-date {
+  font-size: 11px;
+  color: var(--fg-secondary);
+}
+
+.detail-block {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.detail-label {
+  width: 100%;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+}
+
+.chip {
+  display: inline-block;
+  max-width: 100%;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: var(--bg-tertiary);
+  color: var(--fg-secondary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chip.ref-localbranch {
+  color: var(--color-local-branch);
+}
+.chip.ref-remotebranch {
+  color: var(--color-remote-branch);
+}
+.chip.ref-tag {
+  color: var(--color-tag);
+}
+
+.detail-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.detail-main-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  flex: 0 0 auto;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 11px;
+  color: var(--fg-secondary);
+}
+
+.detail-path {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.detail-main-header .back {
+  border: 0;
+  background: transparent;
+  color: var(--fg-secondary);
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.diff-mode {
+  display: flex;
+  gap: 2px;
+}
+
+.diff-mode button {
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-tertiary);
+  color: var(--fg-secondary);
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.diff-mode button:first-child {
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+.diff-mode button:last-child {
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+.diff-mode button.active {
+  background: var(--accent-dim);
+  color: var(--fg-primary);
+  border-color: var(--accent);
+}
+
+.detail-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.detail-close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--fg-tertiary);
+  cursor: pointer;
+  z-index: 1;
+}
+
+.detail-close:hover {
+  background: var(--bg-hover);
+  color: var(--fg-primary);
+}
+
+/* ----------------------------------------------------------- working tree */
+
+.working-tree-panel .detail-title {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.detail-hint {
+  color: var(--fg-tertiary);
+  line-height: 1.45;
+}
+
+.detail-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 6px 0;
+}
+
+.commit-message {
+  width: 100%;
+  min-height: 72px;
+  resize: vertical;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-primary);
+  color: var(--fg-primary);
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.commit-message:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--ring-focus);
+}
+
+.amend-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--fg-secondary);
+}
+
+.detail-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.detail-side button {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-tertiary);
+  color: var(--fg-primary);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.detail-side button:hover:not(:disabled) {
+  border-color: var(--border-strong);
+  background: var(--bg-hover);
+}
+
+.detail-side button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.detail-side button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-fg);
+  font-weight: 600;
+}
+
+.detail-side button.primary:disabled {
+  background: var(--bg-tertiary);
+  border-color: var(--border);
+  color: var(--fg-tertiary);
+}
+
+.tree-group + .tree-group {
+  border-top: 1px solid var(--border-subtle);
+}
+
+.tree-group-title {
+  position: sticky;
+  top: 0;
+  padding: 5px 10px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+}
+
+.file-action {
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-tertiary);
+  color: var(--fg-secondary);
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.file-action:hover {
+  color: var(--fg-primary);
+  border-color: var(--border-strong);
+}

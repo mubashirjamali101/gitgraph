@@ -1,0 +1,40 @@
+[package]
+name = "gitgraph"
+version = "0.1.0"
+edition = "2021"
+description = "A fast, minimal git graph viewer for the desktop"
+authors = ["Mubashir Jamali <mubashirjamali101@gmail.com>"]
+license = "MIT"
+homepage = "https://github.com/mubashirjamali101/gitgraph"
+repository = "https://github.com/mubashirjamali101/gitgraph"
+readme = "../README.md"
+# Nothing here is meant for crates.io; the crate is the app's backend.
+publish = false
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+# No transports: every network operation is a `git` subprocess (see
+# commands/remote.rs), so libgit2 never opens a connection. Dropping the
+# default `https`/`ssh` features removes openssl-sys and libssh2-sys — a
+# smaller binary, one less C library to keep patched, and a build that can
+# cross-compile without an OpenSSL for the target architecture.
+git2 = { version = "0.19", default-features = false, features = ["vendored-libgit2"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "time", "process", "io-util"] }
+uuid = { version = "1", features = ["v4"] }
+rfd = "0.15"
+notify = "6"
+
+# `opt-level = "z"` optimizes the binary for size. See the note in docs/BUILD.md
+# about the trade-off against walk and diff speed.
+[profile.release]
+strip = true
+opt-level = "z"
+lto = true
+# One codegen unit lets LTO see the whole crate; with `lto = true` already set,
+# the only cost is build time.
+codegen-units = 1

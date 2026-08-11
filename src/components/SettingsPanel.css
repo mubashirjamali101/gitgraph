@@ -1,0 +1,214 @@
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(1, 4, 9, 0.5);
+  backdrop-filter: blur(3px);
+}
+
+.settings-card {
+  width: min(440px, 92vw);
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  box-shadow: var(--shadow-pop);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.settings-header h2 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.settings-header button {
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--fg-secondary);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.settings-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 10px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+}
+
+.theme-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.theme-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-tertiary);
+  color: var(--fg-primary);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.theme-option.is-active {
+  border-color: var(--accent);
+  box-shadow: var(--ring-focus);
+}
+
+.theme-preview {
+  display: inline-flex;
+  gap: 3px;
+  padding: 3px 4px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+}
+
+.swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.theme-github-dark .swatch.bg { background: #0d1117; }
+.theme-github-dark .swatch.accent { background: #2f81f7; }
+.theme-github-dark .swatch.add { background: #3fb950; }
+.theme-light .swatch.bg { background: #ffffff; }
+.theme-light .swatch.accent { background: #0969da; }
+.theme-light .swatch.add { background: #1f883d; }
+.theme-dracula .swatch.bg { background: #282a36; }
+.theme-dracula .swatch.accent { background: #bd93f9; }
+.theme-dracula .swatch.add { background: #50fa7b; }
+.theme-night-owl .swatch.bg { background: #011627; }
+.theme-night-owl .swatch.accent { background: #82aaff; }
+.theme-night-owl .swatch.add { background: #addb67; }
+
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.segmented button {
+  padding: 6px 14px;
+  border: 0;
+  background: var(--bg-tertiary);
+  color: var(--fg-secondary);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.segmented button + button {
+  border-left: 1px solid var(--border);
+}
+
+.segmented button.is-active {
+  background: var(--accent-dim);
+  color: var(--fg-primary);
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.settings-value {
+  font-size: 11px;
+  color: var(--fg-secondary);
+}
+
+.settings-card input[type='range'] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+/* ------------------------------------------------------------------ about */
+
+.about {
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  /* The name and the site are there to be read and copied. */
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.about-credit {
+  font-size: 13px;
+  color: var(--fg-primary);
+}
+
+.about-credit strong {
+  font-weight: 600;
+}
+
+.about-site {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--accent);
+}
+
+.about-meta {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--fg-tertiary);
+}
+
+/* -------------------------------------------------------------- shortcuts */
+
+.shortcut-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 4px 16px;
+}
+
+.shortcut {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--fg-secondary);
+}
+
+.shortcut dt {
+  display: flex;
+  gap: 3px;
+  flex: 0 0 auto;
+  min-width: 46px;
+}
+
+.shortcut dd {
+  /* Wraps rather than truncating: a shortcut you cannot read is not help. */
+  min-width: 0;
+}
+
+.shortcut kbd {
+  padding: 1px 4px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--bg-tertiary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  color: var(--fg-secondary);
+}

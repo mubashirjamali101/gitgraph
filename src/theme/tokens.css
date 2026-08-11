@@ -1,0 +1,255 @@
+/*
+ * Theme tokens. Switch via :root[data-theme="..."].
+ * Default theme (no attribute) === GitHub Dark.
+ */
+
+:root,
+:root[data-theme="github-dark"] {
+  color-scheme: dark;
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
+  --bg-hover: #1c2128;
+  --bg-active: #262c36;
+  --bg-glass: rgba(22, 27, 34, 0.72);
+
+  --fg-primary: #e6edf3;
+  --fg-secondary: #9198a1;
+  --fg-tertiary: #6e7681;
+  --fg-diff: #e6edf3;
+
+  --border: #30363d;
+  --border-subtle: #21262d;
+  --border-strong: #3d444d;
+
+  --accent: #2f81f7;
+  --accent-hover: #4493f8;
+  --accent-dim: rgba(47, 129, 247, 0.16);
+  --accent-fg: #ffffff;
+
+  --color-add: #3fb950;
+  --color-remove: #f85149;
+  --color-modify: #d29922;
+  --color-rename: #58a6ff;
+  --color-local-branch: #58a6ff;
+  --color-remote-branch: #bc8cff;
+  --color-tag: #d29922;
+  --color-head: #f0883e;
+
+  --app-bg: #0d1117;
+  --detail-bg: #0d1117;
+  --scrollbar-thumb: rgba(110, 118, 129, 0.4);
+
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+
+  --gap-1: 4px;
+  --gap-2: 6px;
+  --gap-3: 8px;
+  --gap-4: 12px;
+  --gap-5: 16px;
+  --gap-6: 20px;
+  --pad-2: 6px;
+  --pad-3: 8px;
+  --pad-4: 12px;
+  --pad-5: 16px;
+  --row-height: 32px;
+
+  --shadow-soft: 0 1px 0 rgba(255, 255, 255, 0.02) inset, 0 8px 24px rgba(1, 4, 9, 0.6);
+  --shadow-pop: 0 16px 40px rgba(1, 4, 9, 0.7);
+  --ring-focus: 0 0 0 2px rgba(47, 129, 247, 0.45);
+
+
+  /* Graph lane palette — indices come from the backend lane engine. */
+  --lane-0: #58a6ff;
+  --lane-1: #3fb950;
+  --lane-2: #d29922;
+  --lane-3: #f85149;
+  --lane-4: #bc8cff;
+  --lane-5: #39c5cf;
+  --lane-6: #f0883e;
+  --lane-7: #8b949e;
+
+  --motion-fast: 120ms;
+  --motion-medium: 200ms;
+  --motion-slow: 320ms;
+}
+
+/* --- Light (GitHub Light) ------------------------------------------------ */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f6f8fa;
+  --bg-tertiary: #eaeef2;
+  --bg-hover: #eef2f6;
+  --bg-active: #d8dee4;
+  --bg-glass: rgba(255, 255, 255, 0.72);
+
+  --fg-primary: #1f2328;
+  --fg-secondary: #59636e;
+  --fg-tertiary: #818b98;
+  --fg-diff: #1f2328;
+
+  --border: #d1d9e0;
+  --border-subtle: #eaeef2;
+  --border-strong: #b6bfca;
+
+  --accent: #0969da;
+  --accent-hover: #218bff;
+  --accent-dim: rgba(9, 105, 218, 0.12);
+  --accent-fg: #ffffff;
+
+  --color-add: #1f883d;
+  --color-remove: #cf222e;
+  --color-modify: #9a6700;
+  --color-rename: #0969da;
+  --color-local-branch: #0969da;
+  --color-remote-branch: #8250df;
+  --color-tag: #9a6700;
+  --color-head: #bc4c00;
+
+  --app-bg: #ffffff;
+  --detail-bg: #ffffff;
+  --scrollbar-thumb: rgba(31, 35, 40, 0.18);
+
+  --shadow-soft: 0 1px 0 rgba(255, 255, 255, 0.8) inset, 0 8px 24px rgba(140, 149, 159, 0.18);
+  --shadow-pop: 0 16px 40px rgba(140, 149, 159, 0.3);
+  --ring-focus: 0 0 0 2px rgba(9, 105, 218, 0.3);
+
+  /* Graph lane palette — indices come from the backend lane engine. */
+  --lane-0: #0969da;
+  --lane-1: #1a7f37;
+  --lane-2: #9a6700;
+  --lane-3: #cf222e;
+  --lane-4: #8250df;
+  --lane-5: #1b7c83;
+  --lane-6: #bc4c00;
+  --lane-7: #59636e;
+}
+
+/* --- Dracula ------------------------------------------------------------- */
+:root[data-theme="dracula"] {
+  color-scheme: dark;
+  --bg-primary: #282a36;
+  --bg-secondary: #21222c;
+  --bg-tertiary: #343746;
+  --bg-hover: #2c2e3a;
+  --bg-active: #3b3e51;
+  --bg-glass: rgba(40, 42, 54, 0.72);
+
+  --fg-primary: #f8f8f2;
+  --fg-secondary: #b9bcd0;
+  --fg-tertiary: #6272a4;
+  --fg-diff: #f8f8f2;
+
+  --border: #44475a;
+  --border-subtle: #343746;
+  --border-strong: #565a72;
+
+  --accent: #bd93f9;
+  --accent-hover: #cba9fb;
+  --accent-dim: rgba(189, 147, 249, 0.18);
+  --accent-fg: #21222c;
+
+  --color-add: #50fa7b;
+  --color-remove: #ff5555;
+  --color-modify: #f1fa8c;
+  --color-rename: #8be9fd;
+  --color-local-branch: #8be9fd;
+  --color-remote-branch: #ff79c6;
+  --color-tag: #ffb86c;
+  --color-head: #ffb86c;
+
+  --app-bg: #282a36;
+  --detail-bg: #282a36;
+  --scrollbar-thumb: rgba(98, 114, 164, 0.45);
+
+  --shadow-soft: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-pop: 0 16px 40px rgba(0, 0, 0, 0.6);
+  --ring-focus: 0 0 0 2px rgba(189, 147, 249, 0.45);
+
+  /* Graph lane palette — indices come from the backend lane engine. */
+  --lane-0: #8be9fd;
+  --lane-1: #50fa7b;
+  --lane-2: #f1fa8c;
+  --lane-3: #ff5555;
+  --lane-4: #bd93f9;
+  --lane-5: #ff79c6;
+  --lane-6: #ffb86c;
+  --lane-7: #6272a4;
+}
+
+/* --- Night Owl ----------------------------------------------------------- */
+:root[data-theme="night-owl"] {
+  color-scheme: dark;
+  --bg-primary: #011627;
+  --bg-secondary: #01111d;
+  --bg-tertiary: #0b253a;
+  --bg-hover: #0e2c41;
+  --bg-active: #103654;
+  --bg-glass: rgba(1, 22, 39, 0.74);
+
+  --fg-primary: #d6deeb;
+  --fg-secondary: #8d9bb1;
+  --fg-tertiary: #637777;
+  --fg-diff: #d6deeb;
+
+  --border: #1d3b53;
+  --border-subtle: #0b253a;
+  --border-strong: #2e567a;
+
+  --accent: #82aaff;
+  --accent-hover: #a3c1ff;
+  --accent-dim: rgba(130, 170, 255, 0.18);
+  --accent-fg: #011627;
+
+  --color-add: #addb67;
+  --color-remove: #ef5350;
+  --color-modify: #ecc48d;
+  --color-rename: #c792ea;
+  --color-local-branch: #82aaff;
+  --color-remote-branch: #c792ea;
+  --color-tag: #ecc48d;
+  --color-head: #f78c6c;
+
+  --app-bg: #011627;
+  --detail-bg: #011627;
+  --scrollbar-thumb: rgba(130, 170, 255, 0.32);
+
+  --shadow-soft: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 8px 24px rgba(0, 0, 0, 0.6);
+  --shadow-pop: 0 16px 40px rgba(0, 0, 0, 0.7);
+  --ring-focus: 0 0 0 2px rgba(130, 170, 255, 0.45);
+
+  /* Graph lane palette — indices come from the backend lane engine. */
+  --lane-0: #82aaff;
+  --lane-1: #addb67;
+  --lane-2: #ecc48d;
+  --lane-3: #ef5350;
+  --lane-4: #c792ea;
+  --lane-5: #7fdbca;
+  --lane-6: #f78c6c;
+  --lane-7: #637777;
+}
+
+/*
+ * Density adjusts spacing only. Row and header heights are published by
+ * `applyGeometry()` in src/constants.ts, so the numbers used for layout maths
+ * and the numbers used for styling are the same numbers.
+ */
+:root[data-density="comfortable"] {
+  --gap-3: 12px;
+  --gap-4: 16px;
+  --pad-3: 12px;
+  --pad-4: 16px;
+  --chrome-height: 46px;
+}
+
+:root {
+  --chrome-height: 38px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --motion-fast: 1ms; --motion-medium: 1ms; --motion-slow: 1ms; }
+}

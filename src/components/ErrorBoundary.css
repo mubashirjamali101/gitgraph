@@ -1,0 +1,79 @@
+.error-boundary {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary, #1c1917);
+  color: var(--fg-primary, #f0ece5);
+  padding: 24px;
+  z-index: 2000;
+}
+
+.error-boundary-card {
+  max-width: 720px;
+  width: 100%;
+  background: var(--bg-secondary, #2a2724);
+  border: 1px solid var(--border, #3a3633);
+  border-radius: 8px;
+  padding: 20px 24px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.error-boundary-card h2 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.error-boundary-summary {
+  color: #f47067;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 13px;
+  margin: 0 0 12px;
+  word-break: break-word;
+}
+
+.error-boundary details {
+  margin: 8px 0 16px;
+}
+
+.error-boundary pre {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 12px;
+  background: var(--bg-primary, #1c1917);
+  padding: 8px;
+  border-radius: 4px;
+  overflow: auto;
+  max-height: 240px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.error-boundary-stack {
+  margin-top: 8px;
+  opacity: 0.85;
+}
+
+.error-boundary-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.error-boundary-actions button {
+  background: var(--bg-primary, #1c1917);
+  color: inherit;
+  border: 1px solid var(--border, #3a3633);
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.error-boundary-actions button:hover {
+  background: var(--bg-hover, #34302c);
+}
+
+.error-boundary-actions button:focus-visible {
+  outline: 2px solid var(--accent, #d97757);
+  outline-offset: 2px;
+}

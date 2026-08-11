@@ -1,0 +1,71 @@
+{
+  "productName": "GitGraph",
+  "version": "0.1.0",
+  "identifier": "com.gitgraph.desktop",
+  "build": {
+    "beforeDevCommand": "pnpm run vite",
+    "beforeBuildCommand": "pnpm run build",
+    "devUrl": "http://localhost:5173",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "GitGraph",
+        "width": 1280,
+        "height": 800,
+        "minWidth": 720,
+        "minHeight": 480,
+        "resizable": true,
+        "fullscreen": false,
+        "titleBarStyle": "Overlay",
+        "hiddenTitle": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self' ipc: http://ipc.localhost; connect-src ipc: http://ipc.localhost; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "publisher": "Mubashir Jamali",
+    "homepage": "https://mubashirjamali.com",
+    "copyright": "\u00a9 2026 Mubashir Jamali",
+    "category": "DeveloperTool",
+    "shortDescription": "A fast, minimal git graph viewer",
+    "longDescription": "GitGraph draws your repository's history as a graph you can read: branches, merges and tags on a canvas beside a virtualized commit list. Stage, commit, stash, branch, merge, rebase and push without leaving it.",
+    "targets": [
+      "app",
+      "dmg",
+      "msi",
+      "nsis",
+      "deb",
+      "appimage",
+      "rpm"
+    ],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "macOS": {
+      "frameworks": [],
+      "minimumSystemVersion": "10.13"
+    },
+    "windows": {
+      "wix": {
+        "language": "en-US"
+      },
+      "nsis": {
+        "installMode": "perMachine"
+      }
+    },
+    "linux": {
+      "appimage": {
+        "bundleMediaFramework": true
+      }
+    }
+  }
+}
