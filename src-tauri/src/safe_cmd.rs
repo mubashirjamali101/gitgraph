@@ -127,17 +127,17 @@ pub async fn run_git_output(repo_path: &str, args: &[&str]) -> Result<String, St
 mod tests {
     use super::*;
     use crate::testutil::TestRepo;
-    use std::fs;
-    use std::path::PathBuf;
 
     /// Install a hook that leaves a marker file behind when it runs.
-    fn install_hook(repo: &TestRepo, name: &str) -> PathBuf {
+    /// Only used by the Unix hook-isolation tests below.
+    #[cfg(unix)]
+    fn install_hook(repo: &TestRepo, name: &str) -> std::path::PathBuf {
+        use std::fs;
         let marker = std::env::temp_dir().join(format!("gitgraph_hook_{}", uuid::Uuid::new_v4()));
         let hooks = repo.dir.join(".git").join("hooks");
         fs::create_dir_all(&hooks).unwrap();
         let path = hooks.join(name);
         fs::write(&path, format!("#!/bin/sh\ntouch {}\n", marker.display())).unwrap();
-        #[cfg(unix)]
         {
             use std::os::unix::fs::PermissionsExt;
             let mut perms = fs::metadata(&path).unwrap().permissions();
