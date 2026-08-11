@@ -27,7 +27,7 @@ serde_json = "1"
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "time", "process", "io-util"] }
 uuid = { version = "1", features = ["v4"] }
 rfd = "0.15"
-notify = "6"
+notify = "8"
 
 # `opt-level = "z"` optimizes the binary for size. See the note in docs/BUILD.md
 # about the trade-off against walk and diff speed.
