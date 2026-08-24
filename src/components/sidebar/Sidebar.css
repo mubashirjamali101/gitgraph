@@ -60,12 +60,32 @@
   align-items: center;
   gap: var(--gap-2);
   height: 28px;
-  padding: 0 var(--pad-2) 0 var(--pad-4);
+  padding: 0 var(--pad-2) 0 var(--pad-3);
   cursor: pointer;
 }
 
 .repo-row:hover { background: var(--bg-hover); }
 .repo-entry.is-active .repo-row { background: var(--bg-active); }
+
+.repo-collapse {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--fg-tertiary);
+  font-size: 10px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.repo-collapse:hover {
+  background: var(--bg-tertiary);
+  color: var(--fg-primary);
+}
 
 .repo-name {
   flex: 0 1 auto;
@@ -97,6 +117,7 @@
   color: var(--fg-secondary);
   font-size: 0.85em;
   line-height: 15px;
+  font-variant-numeric: tabular-nums;
 }
 
 .repo-close {
@@ -119,7 +140,8 @@
 /* --------------------------------------------------------- repo changes */
 
 .repo-changes {
-  padding: var(--gap-2) var(--pad-3) var(--gap-4);
+  padding: var(--gap-2) var(--pad-3) var(--gap-3);
+  border-top: 1px solid var(--border-subtle);
 }
 
 .repo-changes .commit-message {
@@ -130,6 +152,8 @@
   background: var(--bg-primary);
   color: var(--fg-primary);
   font: inherit;
+  font-size: 12px;
+  line-height: 1.4;
   resize: vertical;
 }
 
@@ -154,6 +178,7 @@
   background: var(--accent);
   color: var(--accent-fg);
   font: inherit;
+  font-size: 12px;
   font-weight: 500;
   cursor: pointer;
 }
@@ -166,6 +191,7 @@
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.22);
   font-size: 0.85em;
+  font-variant-numeric: tabular-nums;
 }
 
 .repo-changes .amend-toggle {
@@ -173,6 +199,7 @@
   align-items: center;
   gap: var(--gap-1);
   color: var(--fg-secondary);
+  font-size: 12px;
   cursor: pointer;
 }
 
@@ -186,18 +213,20 @@
   gap: var(--gap-2);
   padding: 0 var(--pad-2) var(--gap-1);
   color: var(--fg-secondary);
-  font-size: 0.9em;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
 }
 
 .group-count {
   padding: 0 5px;
   border-radius: 9px;
   background: var(--bg-tertiary);
-  font-weight: 400;
+  font-weight: 500;
+  font-size: 10.5px;
   letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
 }
 
 .group-action {
@@ -215,14 +244,18 @@
 
 .group-action:hover:not(:disabled) { background: var(--bg-tertiary); color: var(--fg-primary); }
 
-.change-list { list-style: none; }
+.change-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
 
 .change-row {
   display: flex;
   align-items: center;
-  gap: var(--gap-1);
-  height: 22px;
-  padding-right: var(--gap-1);
+  gap: 2px;
+  min-height: 24px;
+  padding: 1px var(--gap-1) 1px 0;
   border-radius: var(--radius-sm);
 }
 
@@ -232,15 +265,14 @@
 .change-open {
   display: flex;
   align-items: baseline;
-  gap: var(--gap-2);
+  gap: 6px;
   flex: 1;
   min-width: 0;
   height: 100%;
-  padding-left: var(--pad-2);
+  padding: 2px 0 2px var(--pad-2);
   border: 0;
   background: transparent;
   color: var(--fg-primary);
-  font: inherit;
   text-align: left;
   cursor: pointer;
 }
@@ -250,6 +282,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
 }
 
 .change-dir {
@@ -261,13 +297,19 @@
   direction: rtl;
   text-align: left;
   color: var(--fg-tertiary);
-  font-size: 0.85em;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
 
 .change-status {
-  flex: 0 0 12px;
+  flex: 0 0 14px;
   text-align: center;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
   font-weight: 600;
+  line-height: 1;
 }
 
 .change-action {
@@ -290,6 +332,7 @@
 .changes-clean {
   padding: var(--gap-2) var(--pad-2);
   color: var(--fg-tertiary);
+  font-size: 12px;
 }
 
 /* ----------------------------------------------------------- resizer */
