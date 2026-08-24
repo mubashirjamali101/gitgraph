@@ -12,6 +12,7 @@
 import { create } from 'zustand'
 
 import { PAGE_SIZE } from './constants'
+import { commitTabId, worktreeTabId, type FileTab } from './graph/fileTabs'
 import { ipc } from './ipc'
 import * as persist from './persist'
 import type {
@@ -110,6 +111,11 @@ export interface Tab {
   detail: OpenCommit | null
   /** Diff for whichever file is open, in the commit panel or the worktree. */
   file: OpenFile | null
+  /** Diffs keyed by editor-tab id so switching tabs does not refetch. */
+  files: Record<string, OpenFile>
+  /** Open file editors; `activeEditor` null means the graph is showing. */
+  editorTabs: FileTab[]
+  activeEditor: string | null
 }
 
 interface Store {
@@ -141,6 +147,9 @@ interface Store {
   rememberScroll: (id: string, scrollTop: number) => void
   setDetailFile: (id: string, path: string | null) => void
   openWorktreeFile: (id: string, path: string | null, staged: boolean) => void
+  openCommitFile: (id: string, sha: string, path: string) => void
+  setActiveEditor: (id: string, tabId: string | null) => void
+  closeFileTab: (id: string, tabId: string) => void
   /** Ask the list to scroll to a commit; `null` once it has. */
   reveal: (id: string, sha: string | null) => void
   setDraft: (id: string, patch: Partial<CommitDraft>) => void
@@ -205,6 +214,9 @@ function newTab(id: string, path: string, name: string, view?: persist.TabView):
     draft: { ...EMPTY_DRAFT, message: view?.draftMessage ?? '' },
     detail: null,
     file: null,
+    files: {},
+    editorTabs: [],
+    activeEditor: null,
   }
 }
 
@@ -257,17 +269,38 @@ export const useStore = create<Store>((set, get) => {
     id: string,
     key: string,
     fetch: () => Promise<FileDiff | null>,
+    force = false,
   ) => {
     const current = get().tabs.find(tab => tab.id === id)
-    if (current?.file?.key === key && !current.file.error) return
-    patch(id, { file: { key, diff: null, loading: true, error: null } })
+    const existing = current?.files[key]
+    if (!force && existing?.diff && !existing.error) {
+      patch(id, { file: existing })
+      return
+    }
+    // Keep the last good diff on screen while a refresh is in flight so an
+    // editor (or a watcher tick) cannot unmount the pane mid-keystroke.
+    if (!existing?.diff) {
+      const pending: OpenFile = { key, diff: null, loading: true, error: null }
+      patch(id, tab => ({
+        file: pending,
+        files: { ...tab.files, [key]: pending },
+      }))
+    }
     try {
       const diff = await fetch()
-      if (get().tabs.find(tab => tab.id === id)?.file?.key !== key) return
-      patch(id, { file: { key, diff, loading: false, error: null } })
+      if (!get().tabs.find(tab => tab.id === id)?.files[key]) return
+      const ready: OpenFile = { key, diff, loading: false, error: null }
+      patch(id, tab => ({
+        file: tab.file?.key === key ? ready : tab.file,
+        files: { ...tab.files, [key]: ready },
+      }))
     } catch (error) {
-      if (get().tabs.find(tab => tab.id === id)?.file?.key !== key) return
-      patch(id, { file: { key, diff: null, loading: false, error: String(error) } })
+      if (!get().tabs.find(tab => tab.id === id)?.files[key]) return
+      const failed: OpenFile = { key, diff: null, loading: false, error: String(error) }
+      patch(id, tab => ({
+        file: tab.file?.key === key ? failed : tab.file,
+        files: { ...tab.files, [key]: failed },
+      }))
     }
   }
 
@@ -362,7 +395,6 @@ export const useStore = create<Store>((set, get) => {
           truncated: page.truncated,
           laneCount: Math.max(1, page.lane_count),
           loading: false,
-          file: null,
         })
         await get().refreshWorkingState(id)
 
@@ -484,21 +516,76 @@ export const useStore = create<Store>((set, get) => {
     },
 
     openWorktreeFile(id, path, staged) {
-      const tab = get().tabs.find(entry => entry.id === id)
-      patch(id, current => ({ draft: { ...current.draft, file: path, fileStaged: staged } }))
       if (!path) {
-        patch(id, { file: null })
+        patch(id, current => ({
+          draft: { ...current.draft, file: null, fileStaged: false },
+        }))
         return
       }
-      // Opening a file is a request to see its diff, and the diff lives in the
-      // expanded working-tree row — so open that row and scroll to it.
-      if (tab && tab.expandedSha !== WORKING_TREE_SHA) {
-        patch(id, { expandedSha: WORKING_TREE_SHA, selectedSha: WORKING_TREE_SHA })
+      const tabId = worktreeTabId(path)
+      patch(id, current => {
+        const next: FileTab = {
+          id: tabId,
+          path,
+          kind: 'worktree',
+          sha: null,
+          staged,
+        }
+        const editorTabs = current.editorTabs.some(tab => tab.id === tabId)
+          ? current.editorTabs.map(tab => (tab.id === tabId ? next : tab))
+          : [...current.editorTabs, next]
+        return {
+          editorTabs,
+          activeEditor: tabId,
+          draft: { ...current.draft, file: path, fileStaged: staged },
+        }
+      })
+      void loadFile(id, tabId, () => ipc.worktreeFileDiff(id, path, staged))
+    },
+
+    openCommitFile(id, sha, path) {
+      const tabId = commitTabId(sha, path)
+      patch(id, current => {
+        const next: FileTab = {
+          id: tabId,
+          path,
+          kind: 'commit',
+          sha,
+          staged: false,
+        }
+        const editorTabs = current.editorTabs.some(tab => tab.id === tabId)
+          ? current.editorTabs
+          : [...current.editorTabs, next]
+        return { editorTabs, activeEditor: tabId, detailFile: path }
+      })
+      void loadFile(id, tabId, () => ipc.commitFileDiff(id, sha, path))
+    },
+
+    setActiveEditor(id, tabId) {
+      patch(id, { activeEditor: tabId })
+      if (!tabId) return
+      const tab = get().tabs.find(entry => entry.id === id)
+      const editor = tab?.editorTabs.find(entry => entry.id === tabId)
+      const cached = tab?.files[tabId]
+      if (cached) patch(id, { file: cached })
+      else if (editor?.kind === 'worktree') {
+        void loadFile(id, tabId, () => ipc.worktreeFileDiff(id, editor.path, editor.staged))
+      } else if (editor?.kind === 'commit' && editor.sha) {
+        const sha = editor.sha
+        void loadFile(id, tabId, () => ipc.commitFileDiff(id, sha, editor.path))
       }
-      patch(id, { revealSha: WORKING_TREE_SHA })
-      void loadFile(id, `worktree:${staged}:${path}`, () =>
-        ipc.worktreeFileDiff(id, path, staged),
-      )
+    },
+
+    closeFileTab(id, tabId) {
+      patch(id, current => {
+        const editorTabs = current.editorTabs.filter(tab => tab.id !== tabId)
+        const { [tabId]: _removed, ...files } = current.files
+        const activeEditor =
+          current.activeEditor === tabId
+            ? editorTabs[editorTabs.length - 1]?.id ?? null
+            : current.activeEditor
+        return { editorTabs, files, activeEditor }
+      })
     },
 
     setDraft(id, update) {

@@ -55,8 +55,8 @@ export const MIN_COLUMN_WIDTH = {
 } as const
 
 export const DEFAULT_COLUMN_WIDTH = {
-  graph: 300,
-  message: 520,
+  graph: 160,
+  message: 560,
   author: 150,
   date: 170,
   sha: 84,

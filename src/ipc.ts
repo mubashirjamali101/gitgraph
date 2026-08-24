@@ -11,6 +11,7 @@ import type {
   DiscoveredRepo,
   FileChanged,
   FileDiff,
+  FileText,
   GraphFilter,
   GraphPage,
   PushImpact,
@@ -31,6 +32,7 @@ export type ResetMode = 'soft' | 'mixed' | 'hard'
 export const ipc = {
   // -------------------------------------------------------------- repos
   pickDirectory: () => invoke<string | null>('pick_directory'),
+  takeCliOpen: () => invoke<string | null>('take_cli_open'),
   scanRepos: (path: string) => invoke<DiscoveredRepo[]>('scan_repos', { path }),
   openRepo: (path: string) => invoke<OpenedRepo>('open_repo', { path }),
   closeRepo: (repoId: string) => invoke<void>('close_repo', { repoId }),
@@ -53,6 +55,10 @@ export const ipc = {
   workingTree: (repoId: string) => invoke<WorkingTree>('working_tree', { repoId }),
   worktreeFileDiff: (repoId: string, path: string, staged: boolean) =>
     invoke<FileDiff | null>('worktree_file_diff', { repoId, path, staged }),
+  worktreeFileText: (repoId: string, path: string, staged: boolean) =>
+    invoke<FileText>('worktree_file_text', { repoId, path, staged }),
+  writeWorktreeFile: (repoId: string, path: string, contents: string) =>
+    invoke<void>('write_worktree_file', { repoId, path, contents }),
   stageFile: (repoId: string, path: string) => invoke<void>('stage_file', { repoId, path }),
   unstageFile: (repoId: string, path: string) => invoke<void>('unstage_file', { repoId, path }),
   stageAll: (repoId: string) => invoke<void>('stage_all', { repoId }),

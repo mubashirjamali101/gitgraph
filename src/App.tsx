@@ -4,6 +4,7 @@
  */
 import { useCallback, useEffect, useState } from 'react'
 import { listen } from '@tauri-apps/api/event'
+import { Settings } from 'lucide-react'
 import { describeError } from './errors'
 
 import { applyGeometry } from './constants'
@@ -29,6 +30,18 @@ export default function App() {
   useEffect(() => {
     void restoreSession()
   }, [restoreSession])
+
+  // A folder on the command line opens after session restore, so a launch like
+  // `GitGraph.app /path/to/repo` lands on that graph instead of the home screen.
+  useEffect(() => {
+    if (restoring) return
+    void ipc
+      .takeCliOpen()
+      .then(path => {
+        if (path) return openPath(path)
+      })
+      .catch(() => {})
+  }, [openPath, restoring])
 
   // Theme, density and font size are applied to the root element, and the
   // geometry constants are published as CSS variables from the same place they
@@ -92,12 +105,17 @@ export default function App() {
           event.preventDefault()
           void openRepository()
           break
-        case 'w':
-          if (active.activeId) {
+        case 'w': {
+          const repo = active.tabs.find(entry => entry.id === active.activeId)
+          if (repo?.activeEditor) {
+            event.preventDefault()
+            active.closeFileTab(repo.id, repo.activeEditor)
+          } else if (active.activeId) {
             event.preventDefault()
             active.closeTab(active.activeId)
           }
           break
+        }
         case ',':
           event.preventDefault()
           setSettingsOpen(true)
@@ -138,7 +156,7 @@ export default function App() {
           aria-label="Settings"
           onClick={() => setSettingsOpen(true)}
         >
-          ⚙
+          <Settings size={22} strokeWidth={1.75} />
         </button>
       </header>
 

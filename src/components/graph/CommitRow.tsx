@@ -17,7 +17,6 @@ interface CommitRowProps {
   top: number
   height: number
   laneWidth: number
-  badgeLimit: number
   selected: boolean
   expanded: boolean
   matched: boolean
@@ -26,7 +25,6 @@ interface CommitRowProps {
   onContextMenu: (row: GraphRow, event: MouseEvent) => void
   onRefActivate: (row: GraphRow, ref: GitRef, event: MouseEvent) => void
   onRefContextMenu: (row: GraphRow, ref: GitRef, event: MouseEvent) => void
-  onShowAllRefs: (row: GraphRow, refs: GitRef[], event: MouseEvent) => void
 }
 
 function CommitRow({
@@ -34,7 +32,6 @@ function CommitRow({
   top,
   height,
   laneWidth,
-  badgeLimit,
   selected,
   expanded,
   matched,
@@ -43,7 +40,6 @@ function CommitRow({
   onContextMenu,
   onRefActivate,
   onRefContextMenu,
-  onShowAllRefs,
 }: CommitRowProps) {
   const working = isWorkingTreeRow(row)
   const className = [
@@ -69,16 +65,14 @@ function CommitRow({
       {/* The lane track is a transparent spacer: the canvas paints beneath it. */}
       <div className="cell cell-graph">
         <div className="lane-track" style={{ width: `${laneWidth}px` }} aria-hidden="true" />
-        <RefBadges
-          refs={row.refs}
-          limit={badgeLimit}
-          onActivate={(ref, event) => onRefActivate(row, ref, event)}
-          onContextMenu={(ref, event) => onRefContextMenu(row, ref, event)}
-          onShowAll={(refs, event) => onShowAllRefs(row, refs, event)}
-        />
       </div>
       <div className="cell cell-message" title={row.message}>
-        {row.message}
+        <RefBadges
+          refs={row.refs}
+          onActivate={(ref, event) => onRefActivate(row, ref, event)}
+          onContextMenu={(ref, event) => onRefContextMenu(row, ref, event)}
+        />
+        <span className="commit-summary">{row.message}</span>
       </div>
       <div className="cell cell-author" title={row.author_email}>
         {row.author_name}

@@ -6,8 +6,8 @@
  * active repository expands to show its uncommitted changes, so the sidebar
  * answers "what is going on in this repo" without leaving the graph.
  *
- * The changes panel under the active repo can be collapsed to free vertical
- * space; the collapsed state is local and resets when the active tab changes.
+ * Click the active repo row to collapse or expand its changes panel. The
+ * collapsed state is local and resets when the active tab changes.
  */
 import { useEffect, useRef, useState } from 'react'
 
@@ -87,56 +87,50 @@ export default function Sidebar({ onOpen }: { onOpen: () => void }) {
                 role="button"
                 tabIndex={0}
                 aria-current={active}
+                aria-expanded={active ? changesOpen : undefined}
                 title={tab.path}
-                onClick={() => setActive(tab.id)}
+                onClick={() => {
+                  if (active) setChangesOpen(open => !open)
+                  else setActive(tab.id)
+                }}
                 onKeyDown={event => {
                   if (event.key === 'Enter' || event.key === ' ') {
                     event.preventDefault()
-                    setActive(tab.id)
+                    if (active) setChangesOpen(open => !open)
+                    else setActive(tab.id)
                   }
                 }}
               >
-                {active ? (
-                  <button
-                    type="button"
-                    className="repo-collapse"
-                    aria-label={changesOpen ? 'Collapse changes' : 'Expand changes'}
-                    aria-expanded={changesOpen}
-                    title={changesOpen ? 'Collapse changes' : 'Expand changes'}
-                    onClick={event => {
-                      event.stopPropagation()
-                      setChangesOpen(open => !open)
-                    }}
-                    onKeyDown={event => event.stopPropagation()}
-                  >
-                    {changesOpen ? '▾' : '▸'}
-                  </button>
-                ) : (
-                  <span className="repo-collapse" aria-hidden />
-                )}
                 <span className="repo-name">{tab.name}</span>
                 {tab.status && (
                   <span className="repo-branch" title={`On ${tab.status.branch}`}>
                     {tab.status.branch}
                   </span>
                 )}
-                {changes > 0 && (
-                  <span className="repo-count" title={`${changes} changed files`}>
-                    {changes}
-                  </span>
-                )}
-                <button
-                  type="button"
-                  className="repo-close"
-                  aria-label={`Close ${tab.name}`}
-                  title="Close repository (⌘W)"
-                  onClick={event => {
-                    event.stopPropagation()
-                    closeTab(tab.id)
-                  }}
-                >
-                  ×
-                </button>
+                <span className="repo-end">
+                  {changes > 0 && (
+                    <span className="repo-count" title={`${changes} changed files`}>
+                      {changes}
+                    </span>
+                  )}
+                  {active && (
+                    <span className="repo-disclosure" aria-hidden>
+                      {changesOpen ? '▾' : '▸'}
+                    </span>
+                  )}
+                  <button
+                    type="button"
+                    className="repo-close"
+                    aria-label={`Close ${tab.name}`}
+                    title="Close repository (⌘W)"
+                    onClick={event => {
+                      event.stopPropagation()
+                      closeTab(tab.id)
+                    }}
+                  >
+                    ×
+                  </button>
+                </span>
               </div>
 
               {active && changesOpen && (

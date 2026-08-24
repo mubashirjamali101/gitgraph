@@ -12,6 +12,8 @@ import { actions, type Confirmation } from '../actions'
 import { useStore, type Tab } from '../store'
 import type { GitRef, GraphRow } from '../types'
 import CommitList from './graph/CommitList'
+import EditorTabBar from './graph/EditorTabBar'
+import FileDiffPage from './graph/FileDiffPage'
 import ConflictBanner from './ConflictBanner'
 import ConfirmDialog from './ConfirmDialog'
 import ContextMenu from './ContextMenu'
@@ -102,7 +104,10 @@ export default function RepoView({ tab }: { tab: Tab }) {
   return (
     <div className="repo-view">
       {banner}
-      {tab.loading && tab.rows.length === 0 ? (
+      {tab.editorTabs.length > 0 && <EditorTabBar tab={tab} />}
+      {tab.activeEditor ? (
+        <FileDiffPage tab={tab} />
+      ) : tab.loading && tab.rows.length === 0 ? (
         <div className="graph-skeleton" aria-label="Loading history">
           {Array.from({ length: 14 }, (_, index) => (
             <div key={index} className="skeleton-row" style={{ opacity: 1 - index * 0.06 }} />

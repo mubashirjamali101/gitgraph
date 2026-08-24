@@ -137,7 +137,7 @@ export default function CommitList({ tab, onRefMenu, onRowMenu, onCheckout }: Co
     [rows, tab.selectedSha],
   )
 
-  const { laneGap, laneWidth, badgeLimit } = useMemo(
+  const { laneGap, laneWidth } = useMemo(
     () => graphGeometry(columns.graph, tab.laneCount),
     [columns.graph, tab.laneCount],
   )
@@ -366,13 +366,6 @@ export default function CommitList({ tab, onRefMenu, onRowMenu, onCheckout }: Co
     [onRefMenu],
   )
 
-  const handleShowAllRefs = useCallback(
-    (row: GraphRow, refs: GitRef[], event: MouseEvent) => {
-      onRefMenu(row, refs[0], { x: event.clientX, y: event.clientY })
-    },
-    [onRefMenu],
-  )
-
   const visible = []
   for (let index = range.start; index < range.end; index++) {
     const row = rows[index]
@@ -384,7 +377,6 @@ export default function CommitList({ tab, onRefMenu, onRowMenu, onCheckout }: Co
         top={layout.top(index)}
         height={rowHeight}
         laneWidth={laneWidth}
-        badgeLimit={badgeLimit}
         selected={tab.selectedSha === row.sha}
         expanded={tab.expandedSha === row.sha}
         matched={matchSet.has(index)}
@@ -393,7 +385,6 @@ export default function CommitList({ tab, onRefMenu, onRowMenu, onCheckout }: Co
         onContextMenu={handleRowMenu}
         onRefActivate={handleRefActivate}
         onRefContextMenu={handleRefMenu}
-        onShowAllRefs={handleShowAllRefs}
       />,
     )
   }

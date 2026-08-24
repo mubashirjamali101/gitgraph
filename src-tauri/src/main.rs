@@ -22,6 +22,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             // repositories
             commands::repo::pick_directory,
+            commands::repo::take_cli_open,
             commands::repo::scan_repos,
             commands::repo::open_repo,
             commands::repo::close_repo,
@@ -35,6 +36,8 @@ fn main() {
             // working tree
             commands::worktree::working_tree,
             commands::worktree::worktree_file_diff,
+            commands::worktree::worktree_file_text,
+            commands::worktree::write_worktree_file,
             commands::worktree::stage_file,
             commands::worktree::unstage_file,
             commands::worktree::stage_all,

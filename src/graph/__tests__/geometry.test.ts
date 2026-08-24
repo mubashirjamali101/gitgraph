@@ -1,6 +1,6 @@
 /**
- * The graph column is shared between lanes and ref badges. Both halves are
- * sized from the repository's lane count, so they stay put while you scroll.
+ * The graph column is only lanes. Width is sized from the repository's lane
+ * count, so they stay put while you scroll.
  */
 import { describe, expect, it } from 'vitest'
 
@@ -21,18 +21,10 @@ describe('graph column geometry', () => {
     expect(many.laneWidth).toBeLessThanOrEqual(DEFAULT_COLUMN_WIDTH.graph)
   })
 
-  it('always leaves room for at least one badge', () => {
-    for (const width of [60, 140, 300, 900]) {
-      for (const lanes of [1, 7, 40]) {
-        expect(graphGeometry(width, lanes).badgeLimit).toBeGreaterThanOrEqual(1)
-      }
-    }
-  })
-
-  it('shows more badges as the column widens', () => {
-    const narrow = graphGeometry(200, 2).badgeLimit
-    const wide = graphGeometry(600, 2).badgeLimit
-    expect(wide).toBeGreaterThan(narrow)
+  it('gives lanes the whole graph column', () => {
+    const geo = graphGeometry(200, 2)
+    expect(geo.laneGap).toBe(LANE_WIDTH)
+    expect(geo.laneWidth).toBeLessThanOrEqual(200)
   })
 
   it('treats a repository with no lanes as having one', () => {

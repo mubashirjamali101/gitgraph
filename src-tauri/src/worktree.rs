@@ -5,10 +5,15 @@
 //! tree→workdir diff does) shows the user a patch that does not match what a
 //! commit would actually contain.
 
+use std::path::{Path, PathBuf};
+
 use git2::{Diff, DiffOptions, Repository};
 use serde::Serialize;
 
 use crate::diff::{self, FileChanged, FileDiff};
+use crate::validate;
+
+const MAX_TEXT: usize = 8 * 1024 * 1024;
 
 /// The two file lists. Diffs are fetched per file: the panel shows one at a
 /// time, and sending every file's hunks made a busy tree megabytes of JSON.
@@ -68,6 +73,128 @@ pub fn file_diff(repo: &Repository, path: &str, staged: bool) -> Result<Option<F
     let _ = diff.find_similar(None);
 
     Ok(diff::collect(&diff).into_iter().next())
+}
+
+/// Both sides of a working-tree file, as text, for the editor.
+#[derive(Debug, Serialize)]
+pub struct FileText {
+    pub original: String,
+    pub current: String,
+    pub binary: bool,
+}
+
+fn decode(bytes: &[u8]) -> Result<(String, bool), String> {
+    if bytes.len() > MAX_TEXT {
+        return Err("File is too large to open".into());
+    }
+    if bytes.contains(&0) {
+        return Ok((String::new(), true));
+    }
+    Ok((String::from_utf8_lossy(bytes).into_owned(), false))
+}
+
+fn blob_bytes(repo: &Repository, oid: git2::Oid) -> Result<Vec<u8>, String> {
+    let blob = repo.find_blob(oid).map_err(|e| e.to_string())?;
+    Ok(blob.content().to_vec())
+}
+
+fn head_bytes(repo: &Repository, path: &str) -> Result<Option<Vec<u8>>, String> {
+    let Some(tree) = repo
+        .head()
+        .ok()
+        .and_then(|head| head.peel_to_commit().ok())
+        .and_then(|commit| commit.tree().ok())
+    else {
+        return Ok(None);
+    };
+    match tree.get_path(Path::new(path)) {
+        Ok(entry) => {
+            let object = entry.to_object(repo).map_err(|e| e.to_string())?;
+            match object.as_blob() {
+                Some(blob) => Ok(Some(blob.content().to_vec())),
+                None => Ok(None),
+            }
+        }
+        Err(_) => Ok(None),
+    }
+}
+
+fn index_bytes(repo: &Repository, path: &str) -> Result<Option<Vec<u8>>, String> {
+    let index = repo.index().map_err(|e| e.to_string())?;
+    match index.get_path(Path::new(path), 0) {
+        Some(entry) => blob_bytes(repo, entry.id).map(Some),
+        None => Ok(None),
+    }
+}
+
+fn worktree_bytes(repo: &Repository, path: &str) -> Result<Option<Vec<u8>>, String> {
+    let dest = worktree_path(repo, path)?;
+    if !dest.is_file() {
+        return Ok(None);
+    }
+    let bytes = std::fs::read(&dest).map_err(|e| e.to_string())?;
+    if bytes.len() > MAX_TEXT {
+        return Err("File is too large to open".into());
+    }
+    Ok(Some(bytes))
+}
+
+fn worktree_path(repo: &Repository, rel: &str) -> Result<PathBuf, String> {
+    validate::repo_path(rel)?;
+    let root = repo.workdir().ok_or_else(|| "Bare repository".to_string())?;
+    let dest = root.join(rel);
+    let root_abs = root.canonicalize().map_err(|e| e.to_string())?;
+    let parent = dest.parent().ok_or_else(|| "Invalid path".to_string())?;
+    if !parent.exists() {
+        return Err("Path is outside the repository".into());
+    }
+    let parent_abs = parent.canonicalize().map_err(|e| e.to_string())?;
+    if !parent_abs.starts_with(&root_abs) {
+        return Err("Path is outside the repository".into());
+    }
+    Ok(dest)
+}
+
+/// Left = original (HEAD for staged, index for unstaged). Right = current.
+pub fn file_text(repo: &Repository, path: &str, staged: bool) -> Result<FileText, String> {
+    let original_bytes = if staged {
+        head_bytes(repo, path)?
+    } else {
+        match index_bytes(repo, path)? {
+            Some(bytes) => Some(bytes),
+            None => head_bytes(repo, path)?,
+        }
+    };
+    let current_bytes = if staged {
+        index_bytes(repo, path)?
+    } else {
+        worktree_bytes(repo, path)?
+    };
+
+    let (original, original_binary) = match original_bytes {
+        Some(bytes) => decode(&bytes)?,
+        None => (String::new(), false),
+    };
+    let (current, current_binary) = match current_bytes {
+        Some(bytes) => decode(&bytes)?,
+        None => (String::new(), false),
+    };
+    Ok(FileText {
+        original,
+        current,
+        binary: original_binary || current_binary,
+    })
+}
+
+pub fn write_worktree(repo: &Repository, path: &str, contents: &str) -> Result<(), String> {
+    if contents.len() > MAX_TEXT {
+        return Err("File is too large to save".into());
+    }
+    let dest = worktree_path(repo, path)?;
+    if !dest.is_file() {
+        return Err("File is not in the working tree".into());
+    }
+    std::fs::write(&dest, contents.as_bytes()).map_err(|e| e.to_string())
 }
 
 #[cfg(test)]
@@ -148,5 +275,22 @@ mod tests {
         let tree = load(&repo.open()).unwrap();
         assert_eq!(tree.staged.len(), 1);
         assert_eq!(tree.staged[0].path, "first.txt");
+    }
+
+    #[test]
+    fn unstaged_text_is_index_versus_workdir() {
+        let repo = TestRepo::new();
+        repo.write("tracked.txt", "one\n");
+        repo.commit_all("base");
+        repo.write("tracked.txt", "two\n");
+
+        let sides = file_text(&repo.open(), "tracked.txt", false).unwrap();
+        assert!(!sides.binary);
+        assert_eq!(sides.original, "one\n");
+        assert_eq!(sides.current, "two\n");
+
+        write_worktree(&repo.open(), "tracked.txt", "three\n").unwrap();
+        let after = file_text(&repo.open(), "tracked.txt", false).unwrap();
+        assert_eq!(after.current, "three\n");
     }
 }

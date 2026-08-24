@@ -29,6 +29,16 @@ pub struct RepoStatus {
     pub tracking: Option<BranchTracking>,
 }
 
+/// Directory passed on the process command line, if any.
+#[tauri::command]
+pub fn take_cli_open() -> Option<String> {
+    std::env::args()
+        .skip(1)
+        .map(std::path::PathBuf::from)
+        .find(|path| path.is_dir())
+        .map(|path| path.to_string_lossy().into_owned())
+}
+
 #[tauri::command]
 pub fn pick_directory() -> Result<Option<String>, String> {
     // A cancelled dialog is a normal outcome, not an error the UI must handle.

@@ -147,7 +147,18 @@
 }
 
 .cell-message {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   color: var(--fg-primary);
+}
+
+.commit-summary {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .cell-author,
@@ -174,7 +185,9 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  flex: 0 1 auto;
   min-width: 0;
+  overflow: hidden;
 }
 
 .ref-badge {
@@ -182,10 +195,8 @@
   align-items: center;
   gap: 4px;
   max-width: 190px;
-  /* Shrinks under pressure, but never below a readable stub: a badge collapsed
-     to "d…" tells you less than the "+N" chip beside it. */
-  min-width: 88px;
-  flex: 0 1 auto;
+  min-width: 0;
+  flex: 0 0 auto;
   padding: 1px 6px;
   border-radius: 3px;
   border: 1px solid transparent;

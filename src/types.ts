@@ -100,6 +100,13 @@ export interface FileDiff {
   hunks: DiffHunk[]
 }
 
+/** Both sides of a working-tree file as text, for the editor. */
+export interface FileText {
+  original: string
+  current: string
+  binary: boolean
+}
+
 export interface FileChanged {
   path: string
   change_type: ChangeType

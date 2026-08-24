@@ -184,6 +184,8 @@ export async function invoke<T = unknown>(cmd: string, args: Record<string, unkn
   const repo = typeof args.repoId === 'string' ? byId(args.repoId) : repoFor(data.repoPath)
 
   switch (cmd) {
+    case 'take_cli_open':
+      return null as T
     case 'pick_directory': {
       // Hand back a different path each time so several tabs can be opened.
       const suffix = EXTRA_REPOS[nextRepo % EXTRA_REPOS.length]
@@ -257,6 +259,27 @@ export async function invoke<T = unknown>(cmd: string, args: Record<string, unkn
         args.staged ? data.stagedDiff.concat(data.unstagedDiff) : data.unstagedDiff.concat(data.stagedDiff),
         String(args.path),
       ) as T
+    case 'worktree_file_text': {
+      const diff = fileDiff(
+        args.staged ? data.stagedDiff.concat(data.unstagedDiff) : data.unstagedDiff.concat(data.stagedDiff),
+        String(args.path),
+      )
+      const original: string[] = []
+      const current: string[] = []
+      for (const hunk of diff?.hunks ?? []) {
+        for (const line of hunk.lines) {
+          if (line.line_type !== 'Added') original.push(line.content)
+          if (line.line_type !== 'Removed') current.push(line.content)
+        }
+      }
+      return {
+        original: original.join('\n'),
+        current: current.join('\n'),
+        binary: diff?.binary ?? false,
+      } as T
+    }
+    case 'write_worktree_file':
+      return undefined as T
     case 'stage_all':
       repo.staged = [...repo.staged, ...repo.unstaged.map(f => ({ ...f, staged: true }))]
       repo.unstaged = []

@@ -49,6 +49,9 @@ function tab(overrides: Partial<Tab> = {}): Tab {
     draft: { message: '', amend: false, file: null, fileStaged: false },
     detail: null,
     file: null,
+    files: {},
+    editorTabs: [],
+    activeEditor: null,
     ...overrides,
   }
 }

@@ -6,7 +6,7 @@ use crate::safe_cmd::{run_git, run_git_output};
 use crate::repo::Registry;
 use crate::validate;
 use crate::diff::FileDiff;
-use crate::worktree::{self, WorkingTree};
+use crate::worktree::{self, FileText, WorkingTree};
 
 const MAX_COMMIT_MESSAGE: usize = 8192;
 
@@ -30,6 +30,33 @@ pub async fn worktree_file_diff(
     validate::repo_path(&path)?;
     let registry = registry.inner().clone();
     super::with_repo(&registry, &repo_id, move |repo| worktree::file_diff(repo, &path, staged)).await
+}
+
+#[tauri::command]
+pub async fn worktree_file_text(
+    repo_id: String,
+    path: String,
+    staged: bool,
+    registry: tauri::State<'_, Arc<Registry>>,
+) -> Result<FileText, String> {
+    validate::repo_path(&path)?;
+    let registry = registry.inner().clone();
+    super::with_repo(&registry, &repo_id, move |repo| worktree::file_text(repo, &path, staged)).await
+}
+
+#[tauri::command]
+pub async fn write_worktree_file(
+    repo_id: String,
+    path: String,
+    contents: String,
+    registry: tauri::State<'_, Arc<Registry>>,
+) -> Result<(), String> {
+    validate::repo_path(&path)?;
+    let registry = registry.inner().clone();
+    super::with_repo(&registry, &repo_id, move |repo| {
+        worktree::write_worktree(repo, &path, &contents)
+    })
+    .await
 }
 
 #[tauri::command]

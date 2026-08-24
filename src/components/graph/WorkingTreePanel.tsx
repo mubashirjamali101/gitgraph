@@ -1,6 +1,6 @@
 /**
- * What the expanded "uncommitted changes" row shows: the two file lists, and
- * the diff of whichever file is open.
+ * What the expanded "uncommitted changes" row shows: the two file lists.
+ * Clicking a file opens it as an editor tab.
  *
  * Composing the commit happens in the sidebar. This panel is the reading
  * surface for the same state — one draft, one place to type it.
@@ -9,7 +9,6 @@ import { useRepoAction } from '../../hooks/useRepoAction'
 import { ipc } from '../../ipc'
 import { useStore, type Tab } from '../../store'
 import type { FileChanged } from '../../types'
-import DiffView from './DiffView'
 import FileTree from './FileTree'
 
 interface WorkingTreePanelProps {
@@ -17,7 +16,6 @@ interface WorkingTreePanelProps {
 }
 
 export default function WorkingTreePanel({ tab }: WorkingTreePanelProps) {
-  const diffMode = useStore(state => state.settings.diffMode)
   const { busy, run } = useRepoAction(tab.id)
 
   const { file, fileStaged } = tab.draft
@@ -31,9 +29,6 @@ export default function WorkingTreePanel({ tab }: WorkingTreePanelProps) {
   const tree = tab.workingTree
   const staged = tree?.staged ?? []
   const unstaged = tree?.unstaged ?? []
-
-  const pending = selected ? tab.file?.key === `worktree:${selected.staged}:${selected.path}` : false
-  const openDiff = pending ? tab.file : null
 
   const fileActions = (file: FileChanged, isStaged: boolean) => (
     <button
@@ -66,7 +61,7 @@ export default function WorkingTreePanel({ tab }: WorkingTreePanelProps) {
         </div>
 
         <p className="detail-hint">
-          Pick a file to see its diff. The commit message lives in the sidebar.
+          Pick a file to open its diff in a tab. The commit message lives in the sidebar.
         </p>
 
         <div className="detail-actions">
@@ -88,48 +83,26 @@ export default function WorkingTreePanel({ tab }: WorkingTreePanelProps) {
       </div>
 
       <div className="detail-main">
-        {selected ? (
-          <>
-            <div className="detail-main-header">
-              <button type="button" className="back" onClick={() => setSelected(null)}>
-                ←
-              </button>
-              <span className="detail-path">{selected.path}</span>
-            </div>
-            <div className="detail-scroll">
-              {!openDiff || openDiff.loading ? (
-                <div className="diff-empty">Loading diff…</div>
-              ) : openDiff.error ? (
-                <div className="diff-empty">{openDiff.error}</div>
-              ) : openDiff.diff ? (
-                <DiffView diff={openDiff.diff} mode={diffMode} />
-              ) : (
-                <div className="diff-empty">No diff for this file</div>
-              )}
-            </div>
-          </>
-        ) : (
-          <div className="detail-scroll">
-            <div className="tree-group">
-              <div className="tree-group-title">Staged ({staged.length})</div>
-              <FileTree
-                files={staged}
-                selected={null}
-                onSelect={path => setSelected({ path, staged: true })}
-                renderActions={file => fileActions(file, true)}
-              />
-            </div>
-            <div className="tree-group">
-              <div className="tree-group-title">Changes ({unstaged.length})</div>
-              <FileTree
-                files={unstaged}
-                selected={null}
-                onSelect={path => setSelected({ path, staged: false })}
-                renderActions={file => fileActions(file, false)}
-              />
-            </div>
+        <div className="detail-scroll">
+          <div className="tree-group">
+            <div className="tree-group-title">Staged ({staged.length})</div>
+            <FileTree
+              files={staged}
+              selected={selected?.staged ? selected.path : null}
+              onSelect={path => setSelected({ path, staged: true })}
+              renderActions={file => fileActions(file, true)}
+            />
           </div>
-        )}
+          <div className="tree-group">
+            <div className="tree-group-title">Changes ({unstaged.length})</div>
+            <FileTree
+              files={unstaged}
+              selected={selected && !selected.staged ? selected.path : null}
+              onSelect={path => setSelected({ path, staged: false })}
+              renderActions={file => fileActions(file, false)}
+            />
+          </div>
+        </div>
       </div>
     </div>
   )

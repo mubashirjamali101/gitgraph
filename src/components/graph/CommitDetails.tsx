@@ -8,7 +8,6 @@ import { memo } from 'react'
 import { isWorkingTreeRow } from '../../graph/rows'
 import { useStore, type Tab } from '../../store'
 import type { GraphRow } from '../../types'
-import DiffView from './DiffView'
 import FileTree from './FileTree'
 import { refLabel } from './RefBadges'
 import WorkingTreePanel from './WorkingTreePanel'
@@ -20,12 +19,11 @@ interface CommitDetailsProps {
 }
 
 function CommitDetails({ tab, row }: CommitDetailsProps) {
-  const diffMode = useStore(state => state.settings.diffMode)
-  const setSettings = useStore(state => state.setSettings)
   const toggleExpanded = useStore(state => state.toggleExpanded)
-  // Which file is open lives with the tab, so switching tabs keeps it.
-  const setSelectedPath = useStore(state => state.setDetailFile)
-  const selectedPath = tab.detailFile
+  const openCommitFile = useStore(state => state.openCommitFile)
+  const selectedPath =
+    tab.editorTabs.find(editor => editor.id === tab.activeEditor && editor.sha === row.sha)
+      ?.path ?? tab.detailFile
 
   if (isWorkingTreeRow(row)) {
     return (
@@ -46,7 +44,6 @@ function CommitDetails({ tab, row }: CommitDetailsProps) {
   const open = tab.detail?.sha === row.sha ? tab.detail : null
   const files = open?.files ?? []
   const message = open?.detail
-  const file = tab.file?.key === `${row.sha}:${selectedPath}` ? tab.file : null
 
   return (
     <div className="detail-frame">
@@ -95,58 +92,19 @@ function CommitDetails({ tab, row }: CommitDetailsProps) {
 
         <div className="detail-main">
           <div className="detail-main-header">
-            {selectedPath ? (
-              <>
-                <button type="button" className="back" onClick={() => setSelectedPath(tab.id, null)}>
-                  ←
-                </button>
-                <span className="detail-path">{selectedPath}</span>
-              </>
-            ) : (
-              <span className="detail-path">
-                {open?.loading
-                  ? 'Loading changes…'
-                  : `${files.length} file${files.length === 1 ? '' : 's'} changed`}
-              </span>
-            )}
-            {selectedPath && (
-              <div className="diff-mode">
-                <button
-                  type="button"
-                  className={diffMode === 'inline' ? 'active' : ''}
-                  onClick={() => setSettings({ diffMode: 'inline' })}
-                >
-                  Inline
-                </button>
-                <button
-                  type="button"
-                  className={diffMode === 'side-by-side' ? 'active' : ''}
-                  onClick={() => setSettings({ diffMode: 'side-by-side' })}
-                >
-                  Split
-                </button>
-              </div>
-            )}
+            <span className="detail-path">
+              {open?.loading
+                ? 'Loading changes…'
+                : `${files.length} file${files.length === 1 ? '' : 's'} changed`}
+            </span>
           </div>
 
           <div className="detail-scroll">
-            {selectedPath ? (
-              file?.loading || !file ? (
-                <div className="diff-empty">Loading diff…</div>
-              ) : file.error ? (
-                <div className="diff-empty">{file.error}</div>
-              ) : file.diff ? (
-                <DiffView diff={file.diff} mode={diffMode} />
-              ) : (
-                <div className="diff-empty">No diff for this file</div>
-              )
-            ) : (
-              <FileTree
-                files={files}
-                selected={selectedPath}
-                onSelect={path => setSelectedPath(tab.id, path)}
-              />
-            )}
+            <FileTree
+              files={files}
+              selected={selectedPath}
+              onSelect={path => openCommitFile(tab.id, row.sha, path)}
+            />
           </div>
         </div>
       </div>
