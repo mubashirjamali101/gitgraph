@@ -5,6 +5,9 @@
  * toolbar's Repo menu — both call `setActive`, and the graph follows. The
  * active repository expands to show its uncommitted changes, so the sidebar
  * answers "what is going on in this repo" without leaving the graph.
+ *
+ * The changes panel under the active repo can be collapsed to free vertical
+ * space; the collapsed state is local and resets when the active tab changes.
  */
 import { useEffect, useRef, useState } from 'react'
 
@@ -24,7 +27,14 @@ export default function Sidebar({ onOpen }: { onOpen: () => void }) {
   const setWidth = useStore(state => state.setSidebarWidth)
 
   const [resizing, setResizing] = useState(false)
+  const [changesOpen, setChangesOpen] = useState(true)
   const aside = useRef<HTMLElement>(null)
+
+  // Reset the panel open when the active repository changes so a newly
+  // selected repo always shows its working tree.
+  useEffect(() => {
+    setChangesOpen(true)
+  }, [activeId])
 
   // Drag-to-resize is tracked on the window, so the pointer may leave the
   // handle (and the sidebar) without the drag stopping.
@@ -86,6 +96,21 @@ export default function Sidebar({ onOpen }: { onOpen: () => void }) {
                   }
                 }}
               >
+                {active && (
+                  <button
+                    type="button"
+                    className="repo-collapse"
+                    aria-label={changesOpen ? 'Collapse changes' : 'Expand changes'}
+                    aria-expanded={changesOpen}
+                    title={changesOpen ? 'Collapse changes' : 'Expand changes'}
+                    onClick={event => {
+                      event.stopPropagation()
+                      setChangesOpen(open => !open)
+                    }}
+                  >
+                    {changesOpen ? '▾' : '▸'}
+                  </button>
+                )}
                 <span className="repo-name">{tab.name}</span>
                 {tab.status && (
                   <span className="repo-branch" title={`On ${tab.status.branch}`}>
@@ -111,7 +136,7 @@ export default function Sidebar({ onOpen }: { onOpen: () => void }) {
                 </button>
               </div>
 
-              {active && (
+              {active && changesOpen && (
                 <>
                   <RepoChanges tab={tab} />
                   <StashPanel tab={tab} />
