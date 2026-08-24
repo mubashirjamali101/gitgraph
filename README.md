@@ -11,13 +11,13 @@ Designed to replace the "open VS Code just for its Git Graph extension" reflex.
 
 ## Screenshots
 
-![GitGraph graph with branches, merges, and tags](docs/screenshots/hd-graph.png)
+![GitGraph graph with branches, merges, and tags](docs/screenshots/graph.jpg)
 
-![Expanded commit](docs/screenshots/hd-commit.png)
+![Expanded commit](docs/screenshots/commit.jpg)
 
-![Working-tree file editor](docs/screenshots/hd-file.png)
+![Working-tree file editor](docs/screenshots/file.jpg)
 
-![Settings](docs/screenshots/hd-settings.png)
+![Settings](docs/screenshots/settings.jpg)
 
 Portfolio: **[mubashirjamali.com/en/open-source/gitgraph](https://www.mubashirjamali.com/en/open-source/gitgraph)** · First release: [GitGraph 0.1](https://www.mubashirjamali.com/en/writing/gitgraph-first-release)
 
