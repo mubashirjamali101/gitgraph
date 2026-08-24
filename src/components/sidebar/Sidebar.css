@@ -87,6 +87,11 @@
   color: var(--fg-primary);
 }
 
+span.repo-collapse {
+  pointer-events: none;
+  visibility: hidden;
+}
+
 .repo-name {
   flex: 0 1 auto;
   min-width: 0;

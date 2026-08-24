@@ -96,7 +96,7 @@ export default function Sidebar({ onOpen }: { onOpen: () => void }) {
                   }
                 }}
               >
-                {active && (
+                {active ? (
                   <button
                     type="button"
                     className="repo-collapse"
@@ -107,9 +107,12 @@ export default function Sidebar({ onOpen }: { onOpen: () => void }) {
                       event.stopPropagation()
                       setChangesOpen(open => !open)
                     }}
+                    onKeyDown={event => event.stopPropagation()}
                   >
                     {changesOpen ? '▾' : '▸'}
                   </button>
+                ) : (
+                  <span className="repo-collapse" aria-hidden />
                 )}
                 <span className="repo-name">{tab.name}</span>
                 {tab.status && (
