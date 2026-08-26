@@ -87,6 +87,17 @@ describe('persisted session', () => {
     expect(restored.settings).toEqual(DEFAULT_SETTINGS)
   })
 
+  it('supports system theme persistence', () => {
+    flush(
+      state({
+        settings: { ...DEFAULT_SETTINGS, theme: 'system' },
+      }),
+    )
+
+    const restored = load()
+    expect(restored.settings.theme).toBe('system')
+  })
+
   it('clamps settings to supported values', () => {
     flush(
       state({

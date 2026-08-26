@@ -11,8 +11,9 @@ const KEY = 'gitgraph_v2'
 const RECENT_LIMIT = 12
 const MAX_TABS = 20
 
-export type Theme = 'github-dark' | 'light' | 'dracula' | 'night-owl'
+export type Theme = 'system' | 'github-dark' | 'light' | 'dracula' | 'night-owl'
 export const THEMES: { id: Theme; label: string }[] = [
+  { id: 'system', label: 'Follow System' },
   { id: 'github-dark', label: 'GitHub Dark' },
   { id: 'light', label: 'GitHub Light' },
   { id: 'dracula', label: 'Dracula' },
@@ -67,7 +68,7 @@ function readBranches(raw: unknown): string[] {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-  theme: 'github-dark',
+  theme: 'system',
   density: 'compact',
   fontSize: 12,
   diffMode: 'inline',

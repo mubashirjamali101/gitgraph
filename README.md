@@ -11,6 +11,8 @@ Designed to replace the "open VS Code just for its Git Graph extension" reflex.
 
 ## Screenshots
 
+![GitGraph Walkthrough: Open, Browse, Stage & Commit](docs/screenshots/walkthrough.svg)
+
 ![GitGraph graph with branches, merges, and tags](docs/screenshots/graph.jpg)
 
 ![Expanded commit](docs/screenshots/commit.jpg)

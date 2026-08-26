@@ -48,7 +48,6 @@ export default function App() {
   // are defined in TypeScript.
   useEffect(() => {
     const root = document.documentElement
-    root.dataset.theme = settings.theme
     root.dataset.density = settings.density
     root.style.fontSize = `${settings.fontSize}px`
 
@@ -58,7 +57,24 @@ export default function App() {
     const isWin = ua.includes('Win') || plat.includes('Win')
     root.dataset.platform = isMac ? 'macos' : isWin ? 'windows' : 'linux'
 
+    const applyTheme = () => {
+      let activeTheme = settings.theme
+      if (settings.theme === 'system') {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+        activeTheme = prefersDark ? 'github-dark' : 'light'
+      }
+      root.dataset.theme = activeTheme
+    }
+
+    applyTheme()
     applyGeometry(settings.density)
+
+    if (settings.theme === 'system') {
+      const media = window.matchMedia('(prefers-color-scheme: dark)')
+      const listener = () => applyTheme()
+      media.addEventListener('change', listener)
+      return () => media.removeEventListener('change', listener)
+    }
   }, [settings])
 
   // The backend watches each repository and tells us when it changes on disk,

@@ -1,6 +1,6 @@
 [package]
 name = "gitgraph"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2021"
 description = "A fast, minimal git graph viewer for the desktop"
 authors = ["Mubashir Jamali <mubashirjamali101@gmail.com>"]

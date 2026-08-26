@@ -90,6 +90,9 @@
   border-radius: 50%;
 }
 
+.theme-system .swatch.bg { background: linear-gradient(135deg, #0d1117 50%, #ffffff 50%); }
+.theme-system .swatch.accent { background: #2f81f7; }
+.theme-system .swatch.add { background: #3fb950; }
 .theme-github-dark .swatch.bg { background: #0d1117; }
 .theme-github-dark .swatch.accent { background: #2f81f7; }
 .theme-github-dark .swatch.add { background: #3fb950; }

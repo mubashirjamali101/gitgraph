@@ -2,6 +2,11 @@
 
 All notable changes to GitGraph. Loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.1.4] — 2026-08-26
+
+- **System Appearance Support (#6)**: Added "Follow System" mode (`theme: 'system'`) as the default theme setting, dynamically matching OS dark (`github-dark`) or light (`light`) appearance in real time.
+- **Documentation Walkthrough (#5)**: Added animated walkthrough asset `docs/screenshots/walkthrough.svg` and linked it in `README.md`.
+
 ## [0.1.3] — 2026-08-26
 
 - **Git Hooks**: Allowed Git hooks (`pre-commit`, `commit-msg`, `post-merge`, etc.) to run on Git operations and augmented environment `PATH` for node/cargo/python runtimes in GUI context.
