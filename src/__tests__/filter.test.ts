@@ -8,7 +8,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { GraphFilter, GraphPage } from '../types'
 
-const graphPage = vi.fn<[string, string | null, number, GraphFilter]>()
+const graphPage = vi.fn(
+  (_id: string, _cursor: string | null, _size: number, _filter: GraphFilter): Promise<GraphPage> =>
+    Promise.resolve({} as GraphPage),
+)
 
 vi.mock('../ipc', () => ({
   ipc: {
