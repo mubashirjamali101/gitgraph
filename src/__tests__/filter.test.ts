@@ -8,14 +8,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { GraphFilter, GraphPage } from '../types'
 
-const graphPage = vi.fn<
-  [string, string | null, number, GraphFilter],
-  Promise<GraphPage>
->()
+const graphPage = vi.fn<[string, string | null, number, GraphFilter]>()
 
 vi.mock('../ipc', () => ({
   ipc: {
-    graphPage: (...args: [string, string | null, number, GraphFilter]) => graphPage(...args),
+    graphPage: (id: string, cursor: string | null, size: number, filter: GraphFilter) =>
+      graphPage(id, cursor, size, filter),
     workingTree: () => Promise.resolve({ staged: [], unstaged: [] }),
     repoStatus: () => Promise.resolve(null),
     stashList: () => Promise.resolve([]),
