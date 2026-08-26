@@ -35,7 +35,5 @@ Object.defineProperty(window, 'sessionStorage', {
   value: createMemoryStorage(),
 })
 // Also bind globals some codepaths use
-// @ts-expect-error assign global
 globalThis.localStorage = window.localStorage
-// @ts-expect-error assign global
 globalThis.sessionStorage = window.sessionStorage

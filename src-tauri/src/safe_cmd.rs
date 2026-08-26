@@ -44,21 +44,57 @@ const LOCAL_TIMEOUT: Duration = Duration::from_secs(30);
 /// Network operations legitimately take minutes on large repositories.
 const NETWORK_TIMEOUT: Duration = Duration::from_secs(300);
 
-fn null_device() -> &'static str {
-    if cfg!(windows) {
-        "NUL"
-    } else {
-        "/dev/null"
-    }
-}
-
 fn configured_git(repo_path: &str, args: &[&str]) -> Command {
     let mut cmd = Command::new("git");
+
+    // On Windows, suppress popping up visible CMD console windows during background git execution.
+    #[cfg(windows)]
+    {
+        use std::os::windows::process::CommandExt;
+        const CREATE_NO_WINDOW: u32 = 0x08000000;
+        cmd.creation_flags(CREATE_NO_WINDOW);
+    }
 
     // The user's own config is read normally — see the module comment. Only
     // prompting is forced off: there is no terminal behind this process, so a
     // prompt is a hang, and the app says so rather than waiting for a timeout.
     cmd.env("GIT_TERMINAL_PROMPT", "0");
+
+    // Augment PATH so hooks and git tools can locate user-installed binaries
+    // (node, nvm, npm, cargo, python, homebrew, etc.) when running in GUI context.
+    #[cfg(unix)]
+    if let Ok(current_path) = std::env::var("PATH") {
+        let mut extra_paths = vec![
+            "/usr/local/bin".to_string(),
+            "/opt/homebrew/bin".to_string(),
+            "/usr/bin".to_string(),
+            "/bin".to_string(),
+        ];
+        if let Ok(home) = std::env::var("HOME") {
+            extra_paths.push(format!("{}/.cargo/bin", home));
+            extra_paths.push(format!("{}/.local/bin", home));
+        }
+        let new_path = format!("{}:{}", extra_paths.join(":"), current_path);
+        cmd.env("PATH", new_path);
+    }
+
+    #[cfg(windows)]
+    if let Ok(current_path) = std::env::var("PATH") {
+        let mut extra_win_paths = vec![
+            r"C:\Program Files\Git\cmd".to_string(),
+            r"C:\Program Files\Git\bin".to_string(),
+            r"C:\Program Files\Git\usr\bin".to_string(),
+        ];
+        if let Ok(user_profile) = std::env::var("USERPROFILE") {
+            extra_win_paths.push(format!(r"{}\AppData\Local\Programs\Git\cmd", user_profile));
+            extra_win_paths.push(format!(r"{}\scoop\shims", user_profile));
+        }
+        if let Ok(program_data) = std::env::var("ProgramData") {
+            extra_win_paths.push(format!(r"{}\chocolatey\bin", program_data));
+        }
+        let new_path = format!("{};{}", extra_win_paths.join(";"), current_path);
+        cmd.env("PATH", new_path);
+    }
 
     for var in [
         "GIT_SSH",
@@ -74,11 +110,11 @@ fn configured_git(repo_path: &str, args: &[&str]) -> Command {
         cmd.env_remove(var);
     }
 
-    // Hooks are found through `core.hooksPath`, which has no environment
-    // override, so point it at a path that cannot contain executables.
-    cmd.arg("-c").arg(format!("core.hooksPath={}", null_device()));
     cmd.arg("-c").arg("safe.directory=*");
     cmd.arg("-c").arg("protocol.allow=user");
+    cmd.arg("-c").arg("core.quotepath=false");
+    cmd.arg("-c").arg("i18n.logOutputEncoding=utf-8");
+    cmd.arg("-c").arg("core.longpaths=true");
     cmd.args(args);
     cmd.current_dir(repo_path);
     cmd.kill_on_drop(true);
@@ -149,7 +185,7 @@ mod tests {
 
     #[tokio::test]
     #[cfg(unix)]
-    async fn checkout_does_not_run_repository_hooks() {
+    async fn checkout_runs_repository_hooks() {
         let repo = TestRepo::new();
         repo.write("a.txt", "a\n");
         repo.commit_all("base");
@@ -158,12 +194,12 @@ mod tests {
         run_git(&repo.path(), &["branch", "feature"]).await.unwrap();
         run_git(&repo.path(), &["checkout", "feature"]).await.unwrap();
 
-        assert!(!marker.exists(), "post-checkout hook ran");
+        assert!(marker.exists(), "post-checkout hook must run");
     }
 
     #[tokio::test]
     #[cfg(unix)]
-    async fn committing_does_not_run_repository_hooks() {
+    async fn committing_runs_repository_hooks() {
         let repo = TestRepo::new();
         repo.write("a.txt", "a\n");
         repo.commit_all("base");
@@ -173,15 +209,12 @@ mod tests {
         run_git(&repo.path(), &["add", "b.txt"]).await.unwrap();
         run_git(&repo.path(), &["commit", "-m", "second", "--quiet"]).await.unwrap();
 
-        assert!(!marker.exists(), "pre-commit hook ran");
+        assert!(marker.exists(), "pre-commit hook must run");
     }
 
-    /// The line between "the repository is untrusted" and "the user is not".
-    ///
-    /// Suppressing the user's own config broke credentials and quietly forged
-    /// commit authorship, without making a hostile repository any safer.
+    /// The user's configuration is read and Git hooks execute normally.
     #[test]
-    fn the_users_own_config_is_read_but_the_repositorys_code_is_not_run() {
+    fn the_users_own_config_is_read_and_hooks_are_allowed() {
         let cmd = configured_git("/tmp", &["fetch", "origin"]);
         let std = cmd.as_std();
 
@@ -203,7 +236,7 @@ mod tests {
         assert_eq!(set("GIT_CONFIG_GLOBAL"), None, "the user's global config must be read");
         assert_eq!(set("GIT_CONFIG_NOSYSTEM"), None, "the system config must be read");
 
-        // Everything protecting against the repository stays.
+        // Prompting is disabled and hijack vectors stripped.
         assert_eq!(set("GIT_TERMINAL_PROMPT").as_deref(), Some("0"));
         for helper in ["GIT_SSH", "GIT_SSH_COMMAND", "GIT_ASKPASS", "GIT_EXTERNAL_DIFF"] {
             assert!(removed(helper), "{helper} must be stripped from the environment");
@@ -211,11 +244,8 @@ mod tests {
 
         let args: Vec<String> =
             std.get_args().map(|arg| arg.to_string_lossy().into_owned()).collect();
-        assert!(
-            args.iter().any(|arg| arg.starts_with("core.hooksPath=")),
-            "hooks must still be pointed away from the repository"
-        );
         assert!(args.iter().any(|arg| arg == "protocol.allow=user"));
+        assert!(!args.iter().any(|arg| arg.starts_with("core.hooksPath=")), "hooks must not be disabled");
     }
 
     #[tokio::test]

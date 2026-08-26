@@ -149,6 +149,17 @@ pub struct Registry {
     repos: Mutex<HashMap<String, Arc<RepoHandle>>>,
 }
 
+fn normalize_path(path: PathBuf) -> PathBuf {
+    #[cfg(windows)]
+    {
+        let s = path.to_string_lossy();
+        if s.starts_with(r"\\?\") {
+            return PathBuf::from(&s[4..]);
+        }
+    }
+    path
+}
+
 impl Registry {
     pub fn new() -> Self {
         Self::default()
@@ -157,18 +168,20 @@ impl Registry {
     /// Open `path`, reusing the existing handle when the same repository is
     /// already open, so a repo opened twice does not get two caches.
     pub fn open(&self, path: &str) -> Result<Arc<RepoHandle>, String> {
-        let canonical = std::fs::canonicalize(path)
-            .map_err(|e| format!("Cannot access path '{path}': {e}"))?;
+        let canonical = normalize_path(
+            std::fs::canonicalize(path).map_err(|e| format!("Cannot access path '{path}': {e}"))?,
+        );
 
         // `discover` walks up to the enclosing repository, so picking a
         // subdirectory in the folder dialog opens the repo it belongs to
         // instead of reporting "not a repository".
         let repo = Repository::discover(&canonical).map_err(|e| e.to_string())?;
         // Use the workdir when git resolved a subdirectory or a linked worktree.
-        let root = repo
-            .workdir()
-            .map(Path::to_path_buf)
-            .unwrap_or_else(|| canonical.clone());
+        let root = normalize_path(
+            repo.workdir()
+                .map(Path::to_path_buf)
+                .unwrap_or_else(|| canonical.clone()),
+        );
 
         let mut repos = self.repos.lock().map_err(|_| "Registry lock poisoned")?;
         if let Some(existing) = repos.values().find(|h| h.path == root) {
@@ -251,5 +264,14 @@ mod tests {
             handle.with_repo(|repo| repo.head().map(|_| ()).map_err(|e| e.to_string())).unwrap();
         }
         assert!(*handle.live.lock().unwrap() <= MAX_HANDLES);
+    }
+
+    #[test]
+    fn normalize_path_strips_windows_unc_prefix() {
+        let path = PathBuf::from(r"\\?\C:\Users\test\repo");
+        let normalized = normalize_path(path);
+        if cfg!(windows) {
+            assert_eq!(normalized.to_string_lossy(), r"C:\Users\test\repo");
+        }
     }
 }

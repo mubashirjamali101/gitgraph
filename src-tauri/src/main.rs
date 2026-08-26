@@ -17,6 +17,14 @@ use std::sync::Arc;
 use repo::Registry;
 
 fn main() {
+    #[cfg(target_os = "linux")]
+    {
+        // Fix for WebKitGTK EGL_BAD_PARAMETER / DMA-BUF renderer crashes on Linux (Arch Linux, Wayland, NVIDIA/AMD drivers)
+        if std::env::var_os("WEBKIT_DISABLE_DMABUF_RENDERER").is_none() {
+            std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
+        }
+    }
+
     tauri::Builder::default()
         .manage(Arc::new(Registry::new()))
         .invoke_handler(tauri::generate_handler![

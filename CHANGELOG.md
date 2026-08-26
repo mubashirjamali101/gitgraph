@@ -2,6 +2,14 @@
 
 All notable changes to GitGraph. Loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.1.3] — 2026-08-26
+
+- **Git Hooks**: Allowed Git hooks (`pre-commit`, `commit-msg`, `post-merge`, etc.) to run on Git operations and augmented environment `PATH` for node/cargo/python runtimes in GUI context.
+- **Windows Background Execution**: Applied `CREATE_NO_WINDOW` (`0x08000000`) flag to suppress CMD window popups on Windows.
+- **Arch Linux / Wayland Compatibility**: Fixed WebKitGTK 2.40+ `EGL_BAD_PARAMETER` crashes by configuring `WEBKIT_DISABLE_DMABUF_RENDERER=1`.
+- **Cross-Platform Hardening**: Forced UTF-8 log output encoding, `core.quotepath=false`, `core.longpaths=true`, and stripped Windows `\\?\` UNC prefixes.
+- **Editor Tab Context Menus**: Added right-click options for file tabs (Close, Close Others, Close Tabs to the Right, Close Tabs to the Left, Close All Tabs, Copy Path).
+
 ## [0.1.0] — unreleased
 
 First release. A desktop git graph viewer: React 19 and TypeScript in front of

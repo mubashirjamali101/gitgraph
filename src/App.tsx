@@ -51,6 +51,13 @@ export default function App() {
     root.dataset.theme = settings.theme
     root.dataset.density = settings.density
     root.style.fontSize = `${settings.fontSize}px`
+
+    const ua = navigator.userAgent || ''
+    const plat = navigator.platform || ''
+    const isMac = ua.includes('Mac') || plat.includes('Mac')
+    const isWin = ua.includes('Win') || plat.includes('Win')
+    root.dataset.platform = isMac ? 'macos' : isWin ? 'windows' : 'linux'
+
     applyGeometry(settings.density)
   }, [settings])
 

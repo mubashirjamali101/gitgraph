@@ -21,7 +21,11 @@
   flex: 0 0 auto;
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border-subtle);
-  /* Room for the macOS traffic lights, which overlay the toolbar. */
+  padding-left: 12px;
+}
+
+/* Room for the macOS traffic lights, which overlay the toolbar. */
+:root[data-platform="macos"] .app-header {
   padding-left: 78px;
 }
 

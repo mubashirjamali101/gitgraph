@@ -13,6 +13,7 @@ import { create } from 'zustand'
 
 import { PAGE_SIZE } from './constants'
 import { commitTabId, worktreeTabId, type FileTab } from './graph/fileTabs'
+export type { FileTab }
 import { ipc } from './ipc'
 import * as persist from './persist'
 import type {
@@ -150,6 +151,10 @@ interface Store {
   openCommitFile: (id: string, sha: string, path: string) => void
   setActiveEditor: (id: string, tabId: string | null) => void
   closeFileTab: (id: string, tabId: string) => void
+  closeOtherFileTabs: (id: string, tabId: string) => void
+  closeFileTabsToRight: (id: string, tabId: string) => void
+  closeFileTabsToLeft: (id: string, tabId: string) => void
+  closeAllFileTabs: (id: string) => void
   /** Ask the list to scroll to a commit; `null` once it has. */
   reveal: (id: string, sha: string | null) => void
   setDraft: (id: string, patch: Partial<CommitDraft>) => void
@@ -586,6 +591,55 @@ export const useStore = create<Store>((set, get) => {
             : current.activeEditor
         return { editorTabs, files, activeEditor }
       })
+    },
+
+    closeOtherFileTabs(id, tabId) {
+      patch(id, current => {
+        const editorTabs = current.editorTabs.filter(tab => tab.id === tabId)
+        const files: Record<string, OpenFile> = {}
+        if (current.files[tabId]) files[tabId] = current.files[tabId]
+        return { editorTabs, files, activeEditor: tabId }
+      })
+    },
+
+    closeFileTabsToRight(id, tabId) {
+      patch(id, current => {
+        const index = current.editorTabs.findIndex(tab => tab.id === tabId)
+        if (index === -1) return {}
+        const editorTabs = current.editorTabs.slice(0, index + 1)
+        const keptIds = new Set(editorTabs.map(tab => tab.id))
+        const files: Record<string, OpenFile> = {}
+        for (const [key, val] of Object.entries(current.files)) {
+          if (keptIds.has(key)) files[key] = val
+        }
+        const activeEditor =
+          current.activeEditor && keptIds.has(current.activeEditor)
+            ? current.activeEditor
+            : tabId
+        return { editorTabs, files, activeEditor }
+      })
+    },
+
+    closeFileTabsToLeft(id, tabId) {
+      patch(id, current => {
+        const index = current.editorTabs.findIndex(tab => tab.id === tabId)
+        if (index === -1) return {}
+        const editorTabs = current.editorTabs.slice(index)
+        const keptIds = new Set(editorTabs.map(tab => tab.id))
+        const files: Record<string, OpenFile> = {}
+        for (const [key, val] of Object.entries(current.files)) {
+          if (keptIds.has(key)) files[key] = val
+        }
+        const activeEditor =
+          current.activeEditor && keptIds.has(current.activeEditor)
+            ? current.activeEditor
+            : tabId
+        return { editorTabs, files, activeEditor }
+      })
+    },
+
+    closeAllFileTabs(id) {
+      patch(id, { editorTabs: [], files: {}, activeEditor: null })
     },
 
     setDraft(id, update) {
